@@ -26,9 +26,8 @@
             android:layout_gravity="start|center"
             android:layout_marginStart="48dp"
             android:text="@string/btn_library"
-            android:textColor="@color/black"
-            android:textSize="@dimen/btn_text_size"
-            android:textStyle="bold" />
+            android:textColor="@color/text_main"
+            android:textSize="@dimen/btn_text_size" />
 
     </FrameLayout>
 

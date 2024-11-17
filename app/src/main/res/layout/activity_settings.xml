@@ -26,9 +26,8 @@
             android:layout_gravity="start|center"
             android:layout_marginStart="48dp"
             android:text="@string/btn_settings"
-            android:textColor="@color/black"
-            android:textSize="@dimen/btn_text_size"
-            android:textStyle="bold" />
+            android:textColor="@color/text_main"
+            android:textSize="@dimen/btn_text_size" />
 
     </FrameLayout>
 
@@ -43,7 +42,7 @@
             android:layout_gravity="start|center"
             android:layout_marginStart="@dimen/btn_icon_padding"
             android:text="@string/btn_dark_theme"
-            android:textColor="@color/black"
+            android:textColor="@color/text_settings"
             android:textSize="@dimen/btn_text_size_min" />
 
         <androidx.appcompat.widget.SwitchCompat
@@ -64,7 +63,7 @@
             android:layout_gravity="start|center"
             android:layout_marginStart="@dimen/btn_icon_padding"
             android:text="@string/btn_share"
-            android:textColor="@color/black"
+            android:textColor="@color/text_settings"
             android:textSize="@dimen/btn_text_size_min" />
 
         <ImageView
@@ -87,7 +86,7 @@
             android:layout_marginStart="@dimen/btn_icon_padding"
             android:layout_marginEnd="@dimen/settings_icon_margin"
             android:text="@string/btn_support"
-            android:textColor="@color/black"
+            android:textColor="@color/text_settings"
             android:textSize="@dimen/btn_text_size_min" />
 
         <ImageView
@@ -109,7 +108,7 @@
             android:layout_gravity="start|center"
             android:layout_marginStart="@dimen/btn_icon_padding"
             android:text="@string/btn_user_agreement"
-            android:textColor="@color/black"
+            android:textColor="@color/text_settings"
             android:textSize="@dimen/btn_text_size_min" />
 
         <ImageView

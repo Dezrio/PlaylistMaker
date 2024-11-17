@@ -22,7 +22,7 @@
         app:icon="@drawable/search"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/btn_icon_padding"
-        app:iconTint="@color/black"
+        app:iconTint="@color/text_main"
         app:cornerRadius="@dimen/btn_corner_radius"
         android:id="@+id/searchBtn"
         android:backgroundTint="@color/white"
@@ -36,15 +36,14 @@
         android:text="@string/btn_search"
         android:fontFamily="sans-serif"
         android:textAllCaps="false"
-        android:textStyle="bold"
         android:textSize="@dimen/btn_text_size"
-        android:textColor="@color/black" />
+        android:textColor="@color/text_main" />
 
     <Button
         app:icon="@drawable/library"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/btn_icon_padding"
-        app:iconTint="@color/black"
+        app:iconTint="@color/text_main"
         app:cornerRadius="@dimen/btn_corner_radius"
         android:id="@+id/libraryBtn"
         android:backgroundTint="@color/white"
@@ -57,15 +56,14 @@
         android:text="@string/btn_library"
         android:fontFamily="sans-serif"
         android:textAllCaps="false"
-        android:textStyle="bold"
         android:textSize="@dimen/btn_text_size"
-        android:textColor="@color/black" />
+        android:textColor="@color/text_main" />
 
     <Button
         app:icon="@drawable/settings"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/btn_icon_padding"
-        app:iconTint="@color/black"
+        app:iconTint="@color/text_main"
         app:cornerRadius="@dimen/btn_corner_radius"
         android:id="@+id/settingsBtn"
         android:backgroundTint="@color/white"
@@ -79,8 +77,7 @@
         android:text="@string/btn_settings"
         android:fontFamily="sans-serif"
         android:textAllCaps="false"
-        android:textStyle="bold"
         android:textSize="@dimen/btn_text_size"
-        android:textColor="@color/black" />
+        android:textColor="@color/text_main" />
 
 </LinearLayout>
