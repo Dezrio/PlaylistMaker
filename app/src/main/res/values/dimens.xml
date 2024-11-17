@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="header_height">61dp</dimen>
+    <dimen name="main_padding">16dp</dimen>
+    <dimen name="main_padding_between">8dp</dimen>
+
+    <dimen name="settings_icon_margin">8dp</dimen>
+
+    <dimen name="btn_icon_padding">6dp</dimen>
+    <dimen name="btn_corner_radius">16dp</dimen>
+    <dimen name="btn_setting_height">61dp</dimen>
+
+    <dimen name="btn_text_size">22sp</dimen>
+    <dimen name="btn_text_size_min">16sp</dimen>
+</resources>
