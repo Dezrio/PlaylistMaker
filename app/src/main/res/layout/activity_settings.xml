@@ -1,53 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_settings"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_settings"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="5dp"
+    tools:context=".SettingsActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_height">
 
         <ImageView
+            android:id="@+id/settings_arrow_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
-            android:src="@drawable/back_arrow"/>
+            android:src="@drawable/back_arrow" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_settings"
-            android:textColor="@color/black"
             android:layout_gravity="start|center"
             android:layout_marginStart="48dp"
-            android:textStyle="bold"
-            android:textSize="@dimen/btn_text_size"/>
+            android:text="@string/btn_settings"
+            android:textColor="@color/black"
+            android:textSize="@dimen/btn_text_size"
+            android:textStyle="bold" />
 
     </FrameLayout>
 
     <FrameLayout
-        android:layout_marginTop="24dp"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/btn_setting_height">
+        android:layout_height="@dimen/btn_setting_height"
+        android:layout_marginTop="24dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start|center"
+            android:layout_marginStart="@dimen/btn_icon_padding"
             android:text="@string/btn_dark_theme"
             android:textColor="@color/black"
-            android:layout_marginStart="@dimen/btn_icon_padding"
-            android:layout_gravity="start|center"
-            android:textSize="@dimen/btn_text_size_min"/>
+            android:textSize="@dimen/btn_text_size_min" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:layout_marginEnd="@dimen/btn_icon_padding"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="end|center"
-            android:layout_height="match_parent" />
+            android:layout_marginEnd="@dimen/btn_icon_padding" />
     </FrameLayout>
 
     <FrameLayout
@@ -58,18 +61,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start|center"
+            android:layout_marginStart="@dimen/btn_icon_padding"
             android:text="@string/btn_share"
             android:textColor="@color/black"
-            android:layout_marginStart="@dimen/btn_icon_padding"
-            android:layout_gravity="start|center"
-            android:textSize="@dimen/btn_text_size_min"/>
+            android:textSize="@dimen/btn_text_size_min" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
             android:layout_marginEnd="@dimen/settings_icon_margin"
-            android:src="@drawable/share"/>
+            android:src="@drawable/share" />
     </FrameLayout>
 
     <FrameLayout
@@ -80,19 +83,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start|center"
+            android:layout_marginStart="@dimen/btn_icon_padding"
+            android:layout_marginEnd="@dimen/settings_icon_margin"
             android:text="@string/btn_support"
             android:textColor="@color/black"
-            android:layout_marginStart="@dimen/btn_icon_padding"
-            android:layout_gravity="start|center"
-            android:layout_marginEnd="@dimen/settings_icon_margin"
-            android:textSize="@dimen/btn_text_size_min"/>
+            android:textSize="@dimen/btn_text_size_min" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
             android:layout_marginEnd="@dimen/settings_icon_margin"
-            android:src="@drawable/support"/>
+            android:src="@drawable/support" />
     </FrameLayout>
 
     <FrameLayout
@@ -103,17 +106,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start|center"
+            android:layout_marginStart="@dimen/btn_icon_padding"
             android:text="@string/btn_user_agreement"
             android:textColor="@color/black"
-            android:layout_marginStart="@dimen/btn_icon_padding"
-            android:layout_gravity="start|center"
-            android:textSize="@dimen/btn_text_size_min"/>
+            android:textSize="@dimen/btn_text_size_min" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
             android:layout_marginEnd="@dimen/settings_icon_margin"
-            android:src="@drawable/arrow_forward"/>
+            android:src="@drawable/arrow_forward" />
     </FrameLayout>
 </LinearLayout>
