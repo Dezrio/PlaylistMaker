@@ -5,8 +5,9 @@
     style="@style/MainLayout">
 
     <TextView
+        android:theme="@style/Theme.PlaylistMaker.Main"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/header_height"
         android:layout_gravity="start"
         android:layout_marginStart="@dimen/main_padding"
         android:layout_marginTop="10dp"

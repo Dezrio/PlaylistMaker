@@ -11,7 +11,8 @@
 
         <ImageView
             android:id="@+id/settings_arrow_back"
-            style="@style/HeaderImage" />
+            style="@style/HeaderImage"
+            android:importantForAccessibility="no" />
 
         <TextView
             style="@style/HeaderText"
@@ -44,6 +45,7 @@
         <ImageView
             android:id="@+id/share"
             style="@style/SettingsButtonImage"
+            android:importantForAccessibility="no"
             android:src="@drawable/share" />
     </FrameLayout>
 
@@ -57,6 +59,7 @@
         <ImageView
             android:id="@+id/support"
             style="@style/SettingsButtonImage"
+            android:importantForAccessibility="no"
             android:src="@drawable/support" />
     </FrameLayout>
 
@@ -70,6 +73,7 @@
         <ImageView
             android:id="@+id/arrow_forward"
             style="@style/SettingsButtonImage"
+            android:importantForAccessibility="no"
             android:src="@drawable/arrow_forward" />
     </FrameLayout>
 </LinearLayout>

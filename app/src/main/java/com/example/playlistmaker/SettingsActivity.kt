@@ -39,7 +39,8 @@ class SettingsActivity : AppCompatActivity() {
 
         findViewById<ImageView>(R.id.arrow_forward).setOnClickListener {
             val offerIntent = Intent(Intent.ACTION_VIEW)
-            offerIntent.data = Uri.parse(R.string.offer_uri.toString())
+            // TODO: Не нашел как распрасить uri из ресурсов, в документации также
+            offerIntent.data = Uri.parse("https://yandex.ru/legal/practicum_offer/")
             startActivity(offerIntent)
         }
 
