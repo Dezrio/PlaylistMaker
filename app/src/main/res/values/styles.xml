@@ -48,7 +48,7 @@
 
     <style name="MainLayout" parent="MainLayoutBase" />
 
-    <style name="MainButton" parent="Widget.MaterialComponents.Button">
+    <style name="MainButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/btn_icon_padding</item>
         <item name="iconTint">@color/text_color_main</item>
