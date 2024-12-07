@@ -24,23 +24,22 @@ class SettingsActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.share).setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND)
             shareIntent.setType("text/plain")
-            shareIntent.putExtra(Intent.EXTRA_TEXT, R.string.curs_uri)
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.curs_uri))
             startActivity(shareIntent)
         }
 
         findViewById<ImageView>(R.id.support).setOnClickListener {
             val sendIntent = Intent(Intent.ACTION_SENDTO)
             sendIntent.data = Uri.parse("mailto:")
-            sendIntent.putExtra(Intent.EXTRA_SUBJECT, R.string.support_subject)
-            sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(R.string.support_email))
-            sendIntent.putExtra(Intent.EXTRA_TEXT, R.string.support_message)
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_subject))
+            sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.support_message))
             startActivity(sendIntent)
         }
 
         findViewById<ImageView>(R.id.arrow_forward).setOnClickListener {
             val offerIntent = Intent(Intent.ACTION_VIEW)
-            // TODO: Не нашел как распрасить uri из ресурсов, в документации также
-            offerIntent.data = Uri.parse("https://yandex.ru/legal/practicum_offer/")
+            offerIntent.data = Uri.parse(getString(R.string.offer_uri))
             startActivity(offerIntent)
         }
 

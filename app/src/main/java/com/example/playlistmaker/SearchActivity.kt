@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -12,6 +13,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class SearchActivity : AppCompatActivity() {
+    private var searchText: String = "";
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -40,6 +43,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = getButtonVisibility(s)
+                searchText = if (s.isNullOrEmpty()) getString(R.string.empty_string) else s.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -50,11 +54,28 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.addTextChangedListener(simpleTextWatcher)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString(EDIT_TEXT_KEY, searchText)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        val text = savedInstanceState.getString(EDIT_TEXT_KEY)
+        findViewById<EditText>(R.id.search_edit_text).setText(text)
+    }
+
     private fun getButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE
         } else {
             View.VISIBLE
         }
+    }
+
+    companion object {
+        const val EDIT_TEXT_KEY:String = "EDIT_TEXT_KEY"
     }
 }
