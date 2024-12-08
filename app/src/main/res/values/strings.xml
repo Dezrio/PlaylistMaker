@@ -6,8 +6,8 @@
     <string name="btn_library">Медиатека</string>
     <string name="btn_settings">Настройки</string>
     <string name="btn_dark_theme">Темная тема</string>
-    <string name="btn_share">Поделиться ссылкой</string>
-    <string name="btn_support">Наисать в поддержку</string>
+    <string name="btn_share">Поделиться приложением</string>
+    <string name="btn_support">Написать в поддержку</string>
     <string name="btn_user_agreement">Пользовательское соглашение</string>
 
     <string name="curs_uri">https://practicum.yandex.ru/android-developer/</string>
