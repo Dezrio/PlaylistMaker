@@ -1,83 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_main"
-    android:orientation="vertical"
-    android:padding="5dp">
+    style="@style/MainLayout">
 
     <TextView
+        android:theme="@style/Theme.PlaylistMaker.Main"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="@dimen/main_padding"
+        android:layout_height="@dimen/header_height"
         android:layout_gravity="start"
+        android:layout_marginStart="@dimen/main_padding"
+        android:layout_marginTop="10dp"
+        android:text="@string/app_name"
         android:textColor="@color/white"
-        android:textSize="@dimen/btn_text_size"
-        android:text="@string/app_name" />
+        android:textSize="@dimen/btn_text_size" />
 
     <Button
-        app:icon="@drawable/search"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/btn_icon_padding"
-        app:iconTint="@color/text_main"
-        app:cornerRadius="@dimen/btn_corner_radius"
         android:id="@+id/searchBtn"
-        android:backgroundTint="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:layout_marginHorizontal="@dimen/main_padding"
+        style="@style/MainButton"
         android:layout_marginTop="@dimen/main_padding"
         android:layout_marginBottom="@dimen/main_padding_between"
         android:text="@string/btn_search"
-        android:fontFamily="sans-serif"
-        android:textAllCaps="false"
-        android:textSize="@dimen/btn_text_size"
-        android:textColor="@color/text_main" />
+        app:icon="@drawable/search" />
 
     <Button
-        app:icon="@drawable/library"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/btn_icon_padding"
-        app:iconTint="@color/text_main"
-        app:cornerRadius="@dimen/btn_corner_radius"
         android:id="@+id/libraryBtn"
-        android:backgroundTint="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:layout_marginHorizontal="@dimen/main_padding"
+        style="@style/MainButton"
         android:layout_marginVertical="@dimen/main_padding_between"
         android:text="@string/btn_library"
-        android:fontFamily="sans-serif"
-        android:textAllCaps="false"
-        android:textSize="@dimen/btn_text_size"
-        android:textColor="@color/text_main" />
+        app:icon="@drawable/library" />
 
     <Button
-        app:icon="@drawable/settings"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/btn_icon_padding"
-        app:iconTint="@color/text_main"
-        app:cornerRadius="@dimen/btn_corner_radius"
         android:id="@+id/settingsBtn"
-        android:backgroundTint="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:layout_marginHorizontal="@dimen/main_padding"
+        style="@style/MainButton"
         android:layout_marginTop="@dimen/main_padding_between"
         android:layout_marginBottom="@dimen/main_padding"
         android:text="@string/btn_settings"
-        android:fontFamily="sans-serif"
-        android:textAllCaps="false"
-        android:textSize="@dimen/btn_text_size"
-        android:textColor="@color/text_main" />
+        app:icon="@drawable/settings" />
 
 </LinearLayout>

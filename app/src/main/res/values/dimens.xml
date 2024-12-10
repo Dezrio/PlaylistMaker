@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="header_height">61dp</dimen>
+    <dimen name="header_height">56dp</dimen>
     <dimen name="main_padding">16dp</dimen>
     <dimen name="main_padding_between">8dp</dimen>
 
