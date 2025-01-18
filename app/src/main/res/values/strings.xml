@@ -15,4 +15,8 @@
     <string name="support_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="support_email">Dezrio@yandex.ru</string>
     <string name="offer_uri">https://yandex.ru/legal/practicum_offer/</string>
+
+    <string name="track_name_text">Наименование</string>
+    <string name="track_author_text">Длительность трэка</string>
+    <string name="track_duration_text">00:00</string>
 </resources>

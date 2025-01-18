@@ -110,5 +110,15 @@
         <item name="android:backgroundTint">@color/background_search_edit_text</item>
         <item name="android:tint">@color/icon_settings</item>
     </style>
+    <style name="TrackPlaceholder">
+        <item name="android:fillColor">@color/track_info</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+    <style name="TrackInfoText">
+        <item name="android:textColor">@color/track_info</item>
+    </style>
+    <style name="TrackIcon">
+        <item name="android:tint">@color/track_info</item>
+    </style>
     <!--SearchEnd-->
 </resources>
