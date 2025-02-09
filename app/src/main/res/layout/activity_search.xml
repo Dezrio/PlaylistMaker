@@ -36,11 +36,12 @@
             android:drawablePadding="8dp"
             android:fontFamily="@font/ys_display_regular"
             android:hint="@string/btn_search"
-            android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1"
             android:paddingHorizontal="12dp"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <ImageView
             android:id="@+id/clear_text"
@@ -64,6 +65,61 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         tools:listitem="@layout/track_item"
-        tools:itemCount="4"/>
+        tools:itemCount="4"
+        android:visibility="visible"/>
 
+    <LinearLayout
+        android:id="@+id/llNotFoundSearch"
+        android:layout_width="312dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="102dp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            style="@style/NotFoundSearchIcon" />
+
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="19sp"
+            android:textColor="?colorOnPrimary"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/not_found_search_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llErrorSearch"
+        android:layout_width="312dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="102dp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            style="@style/ErrorSearchIcon" />
+
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="19sp"
+            android:textColor="?colorOnPrimary"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/error_search_text" />
+
+        <Button
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/btnRefreshSearch"
+            style="@style/RefreshSearchButton"/>
+
+        </LinearLayout>
 </LinearLayout>

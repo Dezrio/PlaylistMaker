@@ -51,5 +51,14 @@
     <style name="TrackIcon">
         <item name="android:tint">@color/white</item>
     </style>
+    <style name="NotFoundSearchIcon" parent="BaseSearchIcon">
+        <item name="android:src">@drawable/not_found_dark</item>
+    </style>
+    <style name="ErrorSearchIcon" parent="BaseSearchIcon">
+        <item name="android:src">@drawable/error_dark</item>
+    </style>
+    <style name="RefreshSearchButton" parent="BaseRefreshSearchButton">
+        <item name="android:textColor">@color/color_main</item>
+    </style>
     <!--SearchEnd-->
 </resources>
