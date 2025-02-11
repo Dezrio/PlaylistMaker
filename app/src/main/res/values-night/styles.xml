@@ -57,7 +57,7 @@
     <style name="ErrorSearchIcon" parent="BaseSearchIcon">
         <item name="android:src">@drawable/error_dark</item>
     </style>
-    <style name="RefreshSearchButton" parent="BaseRefreshSearchButton">
+    <style name="CommonSearchButton" parent="BaseRefreshSearchButton">
         <item name="android:textColor">@color/color_main</item>
     </style>
     <!--SearchEnd-->

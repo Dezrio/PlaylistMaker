@@ -26,7 +26,8 @@
             style="@style/SettingsButton"
             android:text="@string/btn_dark_theme"  />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/smThemeSwitch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="end|center"

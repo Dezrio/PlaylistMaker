@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.bind.search.BaseTrackAdapter
 import com.example.playlistmaker.bind.search.TrackAdapter
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import dataclasses.Track
@@ -29,9 +30,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
-    private var tracks: MutableList<Track> = mutableListOf()
-    private val adapter = TrackAdapter(tracks)
     private var searchText: String = ""
+    private var tracks: MutableList<Track> = mutableListOf()
+    private lateinit var searchEditText: EditText
+    private lateinit var trackAdapter: TrackAdapter
+    private lateinit var trackHistoryAdapter: BaseTrackAdapter
+    private lateinit var searchHistoryHandler: SearchHistoryHandler
     private lateinit var retrofit: Retrofit
     private lateinit var tracksService: TracksAPI
     private lateinit var binding: ActivitySearchBinding
@@ -58,8 +62,14 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.rvTrack.adapter = adapter
-        binding.rvTrack.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        trackAdapter = TrackAdapter(tracks, ::saveTrack)
+        binding.rvTrack.adapter = trackAdapter
+        binding.rvTrack.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        searchHistoryHandler = SearchHistoryHandler((applicationContext as App).getSharedPreferences())
+        trackHistoryAdapter = BaseTrackAdapter(searchHistoryHandler.getSearchHistoryTracks())
+        binding.rvTrackHistory.adapter = trackHistoryAdapter
+        binding.rvTrackHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -69,6 +79,15 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearText.isVisible = !s.isNullOrEmpty()
                 searchText = if (s.isNullOrEmpty()) getString(R.string.empty_string) else s.toString()
+
+                changeTrackHistoryVisibility()
+
+                if (s.isNullOrEmpty()){
+                    tracks.clear()
+                    trackAdapter.notifyDataSetChanged()
+                    setState(SeachResultState.OK)
+                    hideKeyboard()
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -85,6 +104,8 @@ class SearchActivity : AppCompatActivity() {
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (binding.searchEditText.getText().isNullOrEmpty()){
+                    setState(SeachResultState.OK)
+                    changeTrackHistoryVisibility()
                     searchText  = getString(R.string.empty_string)
                     true
                 }
@@ -102,9 +123,21 @@ class SearchActivity : AppCompatActivity() {
         binding.clearText.setOnClickListener {
             binding.searchEditText.setText(R.string.empty_string)
             tracks.clear()
-            adapter.notifyDataSetChanged()
-            setVisibility(SeachResultState.OK)
-            hideKeyboard(binding.searchEditText)
+            trackAdapter.notifyDataSetChanged()
+            setState(SeachResultState.OK)
+            hideKeyboard()
+            binding.searchEditText.clearFocus()
+        }
+
+        binding.btnClearTrackHistory.setOnClickListener{
+            searchHistoryHandler.clearSearchHistory()
+            trackHistoryAdapter.notifyDataSetChanged()
+            binding.llTrackHistory.visibility = View.GONE
+            hideKeyboard()
+        }
+
+        binding.searchEditText.setOnFocusChangeListener { _, _ ->
+            changeTrackHistoryVisibility()
         }
     }
 
@@ -120,6 +153,18 @@ class SearchActivity : AppCompatActivity() {
         binding.searchEditText.setText(savedInstanceState.getString(EDIT_TEXT_KEY))
     }
 
+    private fun changeTrackHistoryVisibility(){
+        binding.llTrackHistory.visibility =
+            if (binding.searchEditText.hasFocus() && binding.searchEditText.text.isEmpty() && searchHistoryHandler.getSearchHistoryTracks().size != 0)
+                View.VISIBLE
+            else View.GONE
+    }
+
+    private fun saveTrack(track: Track) {
+        searchHistoryHandler.saveTrack(track)
+        trackHistoryAdapter.notifyDataSetChanged()
+    }
+
     private fun searchTrack(){
         tracksService.search(searchText).enqueue(object : Callback<TracksResponse> {
             override fun onResponse(call: Call<TracksResponse>,
@@ -129,28 +174,28 @@ class SearchActivity : AppCompatActivity() {
                     if (response.body()?.results?.isNotEmpty() == true) {
                         tracks.clear()
                         tracks.addAll(response.body()?.results!!)
-                        adapter.notifyDataSetChanged()
-                        setVisibility(SeachResultState.OK)
+                        trackAdapter.notifyDataSetChanged()
+                        setState(SeachResultState.OK)
                     } else {
                         tracks.clear()
-                        adapter.notifyDataSetChanged()
-                        setVisibility(SeachResultState.NOT_FUND)
+                        trackAdapter.notifyDataSetChanged()
+                        setState(SeachResultState.NOT_FUND)
                     }
 
                 } else {
                     tracks.clear()
-                    adapter.notifyDataSetChanged()
-                    setVisibility(SeachResultState.ERROR)
+                    trackAdapter.notifyDataSetChanged()
+                    setState(SeachResultState.ERROR)
                 }
             }
 
             override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                setVisibility(SeachResultState.ERROR)
+                setState(SeachResultState.ERROR)
             }
         })
     }
 
-    private fun setVisibility(state: SeachResultState) {
+    private fun setState(state: SeachResultState) {
         findViewById<RecyclerView>(R.id.rvTrack).visibility = getVisibilityState(state == SeachResultState.OK)
         findViewById<LinearLayout>(R.id.llNotFoundSearch).visibility = getVisibilityState(state == SeachResultState.NOT_FUND)
         findViewById<LinearLayout>(R.id.llErrorSearch).visibility = getVisibilityState(state == SeachResultState.ERROR)
@@ -160,10 +205,9 @@ class SearchActivity : AppCompatActivity() {
         return if (isVisible) View.VISIBLE else View.GONE
     }
 
-    private fun hideKeyboard(editText: EditText) {
+    private fun hideKeyboard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(editText.windowToken, 0)
-        editText.clearFocus()
+        inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 
     companion object {
