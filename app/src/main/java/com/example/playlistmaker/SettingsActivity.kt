@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +46,12 @@ class SettingsActivity : AppCompatActivity() {
 
         findViewById<ImageView>(R.id.settings_arrow_back).setOnClickListener {
             finish()
+        }
+
+        val themeSwitch = findViewById<SwitchMaterial>(R.id.smThemeSwitch)
+        themeSwitch.isChecked = (applicationContext as App) .isDarkTheme
+        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            (applicationContext as App) .switchTheme(isChecked)
         }
     }
 }

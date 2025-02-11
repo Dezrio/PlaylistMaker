@@ -17,15 +17,11 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflate
     private val artistName: TextView = itemView.findViewById(R.id.vhArtistName)
     private val trackTime: TextView = itemView.findViewById(R.id.vhTrackTime)
     private val artworkUrl100: ImageView = itemView.findViewById(R.id.ivArtworkUrl100)
-    //private val binding: TrackItemBinding = TrackItemBinding.inflate(LayoutInflater.from(parent.context), parent, true)
 
     fun bind(item: Track){
         trackName.text = item.trackName
         artistName.text = item.artistName
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTime)
-        /*binding.vhTrackName.text = item.trackName
-        binding.vhArtistName.text = item.artistName
-        binding.vhTrackTime.text = item.trackTime*/
 
         Glide.with(itemView)
             .load(item.artworkUrl100)

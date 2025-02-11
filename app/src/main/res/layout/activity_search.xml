@@ -69,6 +69,41 @@
         android:visibility="visible"/>
 
     <LinearLayout
+        android:id="@+id/llTrackHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:textColor="?colorOnPrimary"
+            android:fontFamily="@font/ys_display_medium"
+            android:textSize="19sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="42dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/history_search_text" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTrackHistory"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnClearTrackHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/history_search_clear_text"
+            style="@style/CommonSearchButton" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/llNotFoundSearch"
         android:layout_width="312dp"
         android:layout_height="wrap_content"
@@ -119,7 +154,7 @@
             android:layout_marginTop="24dp"
             android:layout_gravity="center_horizontal"
             android:id="@+id/btnRefreshSearch"
-            style="@style/RefreshSearchButton"/>
+            style="@style/CommonSearchButton"/>
 
         </LinearLayout>
 </LinearLayout>
