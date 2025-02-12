@@ -154,6 +154,7 @@
         <item name="android:layout_height">@dimen/btn_player_size</item>
         <item name="android:background">@drawable/player_button</item>
         <item name="android:clickable">true</item>
+        <item name="tint">@color/white</item>
     </style>
     <style name="CommonPlayerButton" parent="BaseCommonPlayerButton">
         <item name="backgroundTint">@color/color_main_25</item>
