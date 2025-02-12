@@ -49,9 +49,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val themeSwitch = findViewById<SwitchMaterial>(R.id.smThemeSwitch)
-        themeSwitch.isChecked = (applicationContext as App) .isDarkTheme
+        themeSwitch.isChecked = (applicationContext as App).isDarkTheme()
         themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            (applicationContext as App) .switchTheme(isChecked)
+            (applicationContext as App).switchTheme(isChecked)
         }
     }
 }
