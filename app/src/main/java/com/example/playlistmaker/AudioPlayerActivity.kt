@@ -2,7 +2,6 @@ package com.example.playlistmaker
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -28,12 +27,12 @@ class AudioPlayerActivity : AppCompatActivity() {
             insets
         }
 
-        findViewById<ImageView>(R.id.player_arrow_back).setOnClickListener {
+        binding.playerHeader.setOnClickListener {
             finish()
         }
 
         val extras = getIntent().getExtras();
-        val track: Track? = if (extras != null) Gson().fromJson(extras.getString(TRACK_KEY), Track::class.java) else null;
+        val track: Track? = extras?.let { Gson().fromJson(extras.getString(TRACK_KEY), Track::class.java) }
 
         Glide.with(this)
             .load(track?.getCoverArtwork() ?: "")

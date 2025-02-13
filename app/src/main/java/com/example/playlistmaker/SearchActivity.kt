@@ -9,16 +9,13 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.App.Companion.TRACK_KEY
-import com.example.playlistmaker.bind.search.BaseTrackAdapter
 import com.example.playlistmaker.bind.search.TrackAdapter
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.google.gson.Gson
@@ -206,9 +203,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setState(state: SeachResultState) {
-        findViewById<RecyclerView>(R.id.rvTrack).visibility = getVisibilityState(state == SeachResultState.OK)
-        findViewById<LinearLayout>(R.id.llNotFoundSearch).visibility = getVisibilityState(state == SeachResultState.NOT_FUND)
-        findViewById<LinearLayout>(R.id.llErrorSearch).visibility = getVisibilityState(state == SeachResultState.ERROR)
+        binding.rvTrack.visibility = getVisibilityState(state == SeachResultState.OK)
+        binding.llNotFoundSearch.visibility = getVisibilityState(state == SeachResultState.NOT_FUND)
+        binding.llErrorSearch.visibility = getVisibilityState(state == SeachResultState.ERROR)
     }
 
     private fun getVisibilityState(isVisible: Boolean): Int {
