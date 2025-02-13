@@ -27,4 +27,13 @@
 
     <string name="history_search_text">Вы искали</string>
     <string name="history_search_clear_text">Очистить историю</string>
+
+    <string name="track_duration_player_text">Длительность</string>
+    <string name="track_album_player_text">Альбом</string>
+    <string name="track_year_player_text">Год</string>
+    <string name="track_genre_player_text">Жанр</string>
+    <string name="track_country_player_text">Страна</string>
+    <string name="track_time_placeholder">0:00</string>
+    <string name="track_cover_player_text">Обложка трека</string>
+
 </resources>

@@ -6,7 +6,7 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {
-    var isDarkTheme = false
+    private var isDarkTheme = false
     private lateinit var sharedPrefs: SharedPreferences
 
     override fun onCreate() {
@@ -38,8 +38,13 @@ class App : Application() {
         return  sharedPrefs;
     }
 
+    fun isDarkTheme(): Boolean{
+        return isDarkTheme
+    }
+
     companion object {
         const val SHARED_PREFERENCES_FILE = "SHARED_PREFERENCES_FILE"
         const val DARK_THEME_KEY = "DARK_THEME_KEY"
+        const val TRACK_KEY:String = "TRACK_KEY"
     }
 }
