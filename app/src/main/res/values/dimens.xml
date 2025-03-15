@@ -12,4 +12,11 @@
 
     <dimen name="btn_text_size">22sp</dimen>
     <dimen name="btn_text_size_min">16sp</dimen>
+
+    <dimen name="dimension_16">16dp</dimen>
+    <dimen name="dimension_17">17dp</dimen>
+    <dimen name="dimension_24">24dp</dimen>
+
+    <dimen name="btn_player_size">51dp</dimen>
+    <dimen name="btn_play_player_size">100dp</dimen>
 </resources>

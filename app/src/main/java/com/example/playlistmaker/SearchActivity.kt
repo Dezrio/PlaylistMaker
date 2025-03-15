@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,17 +9,16 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.bind.search.BaseTrackAdapter
+import com.example.playlistmaker.App.Companion.TRACK_KEY
 import com.example.playlistmaker.bind.search.TrackAdapter
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.google.gson.Gson
 import dataclasses.Track
 import dataclasses.TracksResponse
 import enums.SeachResultState
@@ -34,7 +34,7 @@ class SearchActivity : AppCompatActivity() {
     private var tracks: MutableList<Track> = mutableListOf()
     private lateinit var searchEditText: EditText
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var trackHistoryAdapter: BaseTrackAdapter
+    private lateinit var trackHistoryAdapter: TrackAdapter
     private lateinit var searchHistoryHandler: SearchHistoryHandler
     private lateinit var retrofit: Retrofit
     private lateinit var tracksService: TracksAPI
@@ -62,12 +62,12 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        trackAdapter = TrackAdapter(tracks, ::saveTrack)
+        trackAdapter = TrackAdapter(tracks, ::saveTrackAndOpenAudioPlayer)
         binding.rvTrack.adapter = trackAdapter
         binding.rvTrack.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         searchHistoryHandler = SearchHistoryHandler((applicationContext as App).getSharedPreferences())
-        trackHistoryAdapter = BaseTrackAdapter(searchHistoryHandler.getSearchHistoryTracks())
+        trackHistoryAdapter = TrackAdapter(searchHistoryHandler.getSearchHistoryTracks(), ::openAudioPlayer)
         binding.rvTrackHistory.adapter = trackHistoryAdapter
         binding.rvTrackHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
@@ -160,9 +160,16 @@ class SearchActivity : AppCompatActivity() {
             else View.GONE
     }
 
-    private fun saveTrack(track: Track) {
+    private fun saveTrackAndOpenAudioPlayer(track: Track) {
         searchHistoryHandler.saveTrack(track)
         trackHistoryAdapter.notifyDataSetChanged()
+        openAudioPlayer(track)
+    }
+
+    private fun openAudioPlayer(track: Track){
+        val intent: Intent = Intent(this, AudioPlayerActivity::class.java)
+        intent.putExtra(TRACK_KEY, Gson().toJson(track))
+        startActivity(intent)
     }
 
     private fun searchTrack(){
@@ -196,9 +203,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setState(state: SeachResultState) {
-        findViewById<RecyclerView>(R.id.rvTrack).visibility = getVisibilityState(state == SeachResultState.OK)
-        findViewById<LinearLayout>(R.id.llNotFoundSearch).visibility = getVisibilityState(state == SeachResultState.NOT_FUND)
-        findViewById<LinearLayout>(R.id.llErrorSearch).visibility = getVisibilityState(state == SeachResultState.ERROR)
+        binding.rvTrack.visibility = getVisibilityState(state == SeachResultState.OK)
+        binding.llNotFoundSearch.visibility = getVisibilityState(state == SeachResultState.NOT_FUND)
+        binding.llErrorSearch.visibility = getVisibilityState(state == SeachResultState.ERROR)
     }
 
     private fun getVisibilityState(isVisible: Boolean): Int {
