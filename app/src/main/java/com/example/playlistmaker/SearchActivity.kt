@@ -3,10 +3,11 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
@@ -32,6 +33,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
     private var searchText: String = ""
     private var tracks: MutableList<Track> = mutableListOf()
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { searchTrack() }
     private lateinit var searchEditText: EditText
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackHistoryAdapter: TrackAdapter
@@ -87,6 +90,8 @@ class SearchActivity : AppCompatActivity() {
                     trackAdapter.notifyDataSetChanged()
                     setState(SeachResultState.OK)
                     hideKeyboard()
+                } else{
+                    searchDebounce()
                 }
             }
 
@@ -100,25 +105,6 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchEditText.addTextChangedListener(simpleTextWatcher)
-
-        binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (binding.searchEditText.getText().isNullOrEmpty()){
-                    setState(SeachResultState.OK)
-                    changeTrackHistoryVisibility()
-                    searchText  = getString(R.string.empty_string)
-                    true
-                }
-
-                searchText = binding.searchEditText.getText().toString()
-
-                searchTrack()
-
-                true
-            }
-
-            false
-        }
 
         binding.clearText.setOnClickListener {
             binding.searchEditText.setText(R.string.empty_string)
@@ -160,20 +146,45 @@ class SearchActivity : AppCompatActivity() {
             else View.GONE
     }
 
-    private fun saveTrackAndOpenAudioPlayer(track: Track) {
-        searchHistoryHandler.saveTrack(track)
-        trackHistoryAdapter.notifyDataSetChanged()
-        openAudioPlayer(track)
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
-    private fun openAudioPlayer(track: Track){
+    private var isClickAllowed = true
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+
+        return current
+    }
+
+    private fun saveTrackAndOpenAudioPlayer(track: Track) {
+        if (!clickDebounce())
+            return
+
+        searchHistoryHandler.saveTrack(track)
+        trackHistoryAdapter.notifyDataSetChanged()
+        openAudioPlayer(track, true)
+    }
+
+    private fun openAudioPlayer(track: Track, isAfterSave: Boolean = false){
+        if (!clickDebounce() && !isAfterSave)
+            return
+
         val intent: Intent = Intent(this, AudioPlayerActivity::class.java)
         intent.putExtra(TRACK_KEY, Gson().toJson(track))
         startActivity(intent)
     }
 
     private fun searchTrack(){
-        tracksService.search(searchText).enqueue(object : Callback<TracksResponse> {
+        binding.progressBar.visibility = View.VISIBLE
+        tracksService.search(binding.searchEditText.getText().toString()).enqueue(object : Callback<TracksResponse> {
             override fun onResponse(call: Call<TracksResponse>,
                                     response: Response<TracksResponse>
             ) {
@@ -203,6 +214,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setState(state: SeachResultState) {
+        binding.progressBar.visibility = View.GONE
         binding.rvTrack.visibility = getVisibilityState(state == SeachResultState.OK)
         binding.llNotFoundSearch.visibility = getVisibilityState(state == SeachResultState.NOT_FUND)
         binding.llErrorSearch.visibility = getVisibilityState(state == SeachResultState.ERROR)
@@ -218,6 +230,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EDIT_TEXT_KEY:String = "EDIT_TEXT_KEY"
+        const val EDIT_TEXT_KEY: String = "EDIT_TEXT_KEY"
+        const val CLICK_DEBOUNCE_DELAY = 1000L
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }
