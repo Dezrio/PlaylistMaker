@@ -19,4 +19,6 @@
     <color name="track_info">#AEAFB4</color>
 
     <color name="player_main">#AEAFB4</color>
+
+    <color name="progress_bar">#3772E7</color>
 </resources>

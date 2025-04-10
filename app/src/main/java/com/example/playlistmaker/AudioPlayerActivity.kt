@@ -1,7 +1,11 @@
 package com.example.playlistmaker
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
+import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,8 +16,21 @@ import com.example.playlistmaker.App.Companion.TRACK_KEY
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.google.gson.Gson
 import dataclasses.Track
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
+    private val handler = Handler(Looper.getMainLooper())
+    private val player = MediaPlayer()
+    private var playerState = STATE_DEFAULT
+
+    private val setTrackCurTimeRunnable = object : Runnable {
+        override fun run() {
+            binding.tvTrackCurrentTime.text = SimpleDateFormat(TRACK_TIME_PATTERN, Locale.getDefault())
+                .format(player.currentPosition)
+            handler.postDelayed(this, SET_CURRENT_TRACK_TIME_DELAY_MILLIS)
+        }
+    }
     private lateinit var binding: ActivityAudioPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,5 +74,73 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.tvAlbum.visibility = View.GONE
             binding.tvAlbumText.visibility = View.GONE
         }
+
+        if (track?.previewUrl != null) {
+            preparePlayer(track.previewUrl)
+        }
+
+        binding.ibtnPlay.setOnClickListener {
+            if (playerState != STATE_DEFAULT) {
+                playerControl()
+            } else {
+                binding.tvAlbum.visibility = View.GONE
+                binding.tvAlbumText.visibility = View.GONE
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        playerPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        player.release()
+    }
+
+    private fun preparePlayer(trackUrl: String) {
+        player.setDataSource(trackUrl)
+        player.prepareAsync()
+        player.setOnPreparedListener {
+            binding.ibtnPlay.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        player.setOnCompletionListener {
+            binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+            handler.removeCallbacks(setTrackCurTimeRunnable)
+            binding.tvTrackCurrentTime.text  = getString(R.string.track_time_placeholder)
+            playerState = STATE_PREPARED
+        }
+    }
+
+    private fun playerControl() {
+        when (playerState) {
+            STATE_PLAYING -> playerPause()
+            STATE_PREPARED, STATE_PAUSED -> playerStart()
+        }
+    }
+
+    private fun playerStart() {
+        player.start()
+        handler.post(setTrackCurTimeRunnable)
+        binding.ibtnPlay.setImageResource(R.drawable.ic_pause)
+        playerState = STATE_PLAYING
+    }
+
+    private fun playerPause() {
+        player.pause()
+        handler.removeCallbacks(setTrackCurTimeRunnable)
+        binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+        playerState = STATE_PAUSED
+    }
+
+    private companion object {
+        const val STATE_DEFAULT = 0
+        const val STATE_PREPARED = 1
+        const val STATE_PLAYING = 2
+        const val STATE_PAUSED = 3
+        const val TRACK_TIME_PATTERN = "mm:ss"
+        const val SET_CURRENT_TRACK_TIME_DELAY_MILLIS = 500L
     }
 }
