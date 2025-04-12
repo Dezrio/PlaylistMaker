@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.content.Context
 import android.content.Intent
@@ -15,7 +15,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.App.Companion.TRACK_KEY
+import com.example.playlistmaker.R
+import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
 import com.example.playlistmaker.creator.HistoryCreator
 import com.example.playlistmaker.creator.SearchCreator
 import com.example.playlistmaker.data.enums.SearchResultStates
@@ -27,7 +28,7 @@ import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
     private val tracksSearchInteractor = SearchCreator.provideTracksSearchInteractor()
-    private val tracksHistoryInteractor = HistoryCreator.provideTracksHistoryInteractor((applicationContext as App).getSharedPreferences())
+    private val tracksHistoryInteractor = HistoryCreator.provideTracksHistoryInteractor()
 
     private var searchText: String = ""
     private var tracks: MutableList<Track> = mutableListOf()
@@ -185,7 +186,7 @@ class SearchActivity : AppCompatActivity() {
         if (foundTracks == null) {
             setState(SearchResultStates.ERROR)
         } else{
-            if (tracks.isNotEmpty()) {
+            if (foundTracks.isNotEmpty()) {
                 tracks.addAll(foundTracks)
                 setState(SearchResultStates.OK)
             } else {

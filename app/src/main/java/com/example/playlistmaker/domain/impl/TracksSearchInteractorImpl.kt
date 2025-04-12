@@ -7,9 +7,9 @@ import java.util.concurrent.Executors
 class TracksSearchInteractorImpl(private val repository: TracksSearchRepository) : TracksSearchInteractor {
     private val executor = Executors.newCachedThreadPool()
 
-    override fun searchTracks(text: String, consumer: TracksSearchInteractor.TrackConsumer) {
+    override fun searchTracks(trackName: String, consumer: TracksSearchInteractor.TrackConsumer) {
         executor.execute {
-            consumer.consume(repository.searchTracks(text))
+            consumer.consume(repository.searchTracks(trackName))
         }
     }
 }

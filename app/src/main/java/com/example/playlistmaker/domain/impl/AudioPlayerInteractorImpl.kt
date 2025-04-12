@@ -32,12 +32,10 @@ class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerIn
     ) {
         when (playerState) {
             STATE_PREPARED, STATE_PAUSED -> {
-                player.start()
-                startCallback()
+                playerStart(startCallback)
             }
             STATE_PLAYING -> {
-                player.pause()
-                pauseCallback()
+                playerPause(pauseCallback)
             }
             else -> {
                 defaultCallback()
@@ -48,11 +46,13 @@ class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerIn
 
     override fun playerStart(startCallback: () -> Unit) {
         player.start()
+        startCallback()
         playerState = STATE_PLAYING
     }
 
     override fun playerPause(pauseCallback: () -> Unit) {
         player.pause()
+        pauseCallback()
         playerState = STATE_PAUSED
     }
 

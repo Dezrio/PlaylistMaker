@@ -1,6 +1,5 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,13 +10,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.App.Companion.TRACK_KEY
+import com.example.playlistmaker.R
+import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
 import com.example.playlistmaker.creator.AudioPlayerCreator
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.google.gson.Gson
 import com.example.playlistmaker.domain.models.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())

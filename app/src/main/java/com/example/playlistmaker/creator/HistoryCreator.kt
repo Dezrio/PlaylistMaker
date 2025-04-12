@@ -1,17 +1,23 @@
 package com.example.playlistmaker.creator
 
-import android.content.SharedPreferences
+import android.app.Application
 import com.example.playlistmaker.data.TracksHistoryRepositoryImpl
 import com.example.playlistmaker.domain.api.interactor.TracksHistoryInteractor
 import com.example.playlistmaker.domain.api.repository.TracksHistoryRepository
 import com.example.playlistmaker.domain.impl.TracksHistoryInteractorImpl
 
 object HistoryCreator {
-    private fun getTrackRepositoryHistory(sharedPrefs: SharedPreferences): TracksHistoryRepository {
-        return TracksHistoryRepositoryImpl(sharedPrefs)
+    private lateinit var application: Application
+
+    fun initApplication(application: Application) {
+        this.application = application
     }
 
-    fun provideTracksHistoryInteractor(sharedPrefs: SharedPreferences): TracksHistoryInteractor {
-        return TracksHistoryInteractorImpl(getTrackRepositoryHistory(sharedPrefs))
+    private fun getTrackRepositoryHistory(): TracksHistoryRepository {
+        return TracksHistoryRepositoryImpl(application)
+    }
+
+    fun provideTracksHistoryInteractor(): TracksHistoryInteractor {
+        return TracksHistoryInteractorImpl(getTrackRepositoryHistory())
     }
 }

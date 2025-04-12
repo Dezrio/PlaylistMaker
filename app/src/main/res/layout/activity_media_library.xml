@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     style="@style/SecondLayout"
-    tools:context=".MediaLibraryActivity">
+    tools:context=".ui.MediaLibraryActivity">
 
     <FrameLayout
         style="@style/HeaderFrame">

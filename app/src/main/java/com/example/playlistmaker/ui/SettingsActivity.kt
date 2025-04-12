@@ -1,15 +1,19 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.LinkManagerCreator
+import com.example.playlistmaker.creator.SettingsCreator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
+    private val settingsInteractorImpl = SettingsCreator.provideSettingsInteractor()
+    private val linkManagerInteractorImpl = LinkManagerCreator.provideLinkManagerInteractor()
+
     private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,34 +28,27 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.share.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.setType("text/plain")
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.curs_uri))
-            startActivity(shareIntent)
+            linkManagerInteractorImpl.shareLink(getString(R.string.curs_uri))
         }
 
         binding.support.setOnClickListener {
-            val sendIntent = Intent(Intent.ACTION_SENDTO)
-            sendIntent.data = Uri.parse("mailto:")
-            sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_subject))
-            sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
-            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.support_message))
-            startActivity(sendIntent)
+            linkManagerInteractorImpl.sendEmail(
+                getString(R.string.support_subject),
+                getString(R.string.support_message),
+                arrayOf(getString(R.string.support_email)))
         }
 
         binding.arrowForward.setOnClickListener {
-            val offerIntent = Intent(Intent.ACTION_VIEW)
-            offerIntent.data = Uri.parse(getString(R.string.offer_uri))
-            startActivity(offerIntent)
+            linkManagerInteractorImpl.openLink(getString(R.string.offer_uri))
         }
 
         binding.settingsArrowBack.setOnClickListener {
             finish()
         }
 
-        binding.smThemeSwitch.isChecked = (applicationContext as App).isDarkTheme()
+        binding.smThemeSwitch.isChecked = settingsInteractorImpl.isDarkTheme()
         binding.smThemeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            (applicationContext as App).switchTheme(isChecked)
+            settingsInteractorImpl.switchTheme(isChecked)
         }
     }
 }
