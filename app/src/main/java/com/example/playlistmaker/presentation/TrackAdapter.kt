@@ -1,6 +1,6 @@
-package com.example.playlistmaker.bind.search
+package com.example.playlistmaker.presentation
 
-import dataclasses.Track
+import com.example.playlistmaker.domain.models.Track
 
 class TrackAdapter(private val data: MutableList<Track>, private val onClick: (Track) -> Unit) : BaseTrackAdapter(data) {
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {

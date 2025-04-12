@@ -1,8 +1,8 @@
-package com.example.playlistmaker.bind.search
+package com.example.playlistmaker.presentation
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dataclasses.Track
+import com.example.playlistmaker.domain.models.Track
 
 
 open class BaseTrackAdapter(private val data: MutableList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {

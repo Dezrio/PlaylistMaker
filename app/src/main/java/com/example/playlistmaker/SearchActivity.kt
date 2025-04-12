@@ -9,7 +9,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,30 +16,24 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.App.Companion.TRACK_KEY
-import com.example.playlistmaker.bind.search.TrackAdapter
+import com.example.playlistmaker.creator.SearchCreator
+import com.example.playlistmaker.data.enums.SearchResultStates
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.api.interactor.TracksSearchInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.presentation.TrackAdapter
 import com.google.gson.Gson
-import dataclasses.Track
-import dataclasses.TracksResponse
-import enums.SeachResultState
-import interfaces.TracksAPI
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
+    private val tracksSearchInteractor = SearchCreator.provideTracksSearchInteractor()
+
     private var searchText: String = ""
     private var tracks: MutableList<Track> = mutableListOf()
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { searchTrack() }
-    private lateinit var searchEditText: EditText
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackHistoryAdapter: TrackAdapter
     private lateinit var searchHistoryHandler: SearchHistoryHandler
-    private lateinit var retrofit: Retrofit
-    private lateinit var tracksService: TracksAPI
     private lateinit var binding: ActivitySearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,13 +46,6 @@ class SearchActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.track_url))
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        tracksService = retrofit.create(TracksAPI::class.java)
 
         binding.settingsArrowBack.setOnClickListener {
             finish()
@@ -88,7 +74,7 @@ class SearchActivity : AppCompatActivity() {
                 if (s.isNullOrEmpty()){
                     tracks.clear()
                     trackAdapter.notifyDataSetChanged()
-                    setState(SeachResultState.OK)
+                    setState(SearchResultStates.OK)
                     hideKeyboard()
                 } else{
                     searchDebounce()
@@ -110,7 +96,7 @@ class SearchActivity : AppCompatActivity() {
             binding.searchEditText.setText(R.string.empty_string)
             tracks.clear()
             trackAdapter.notifyDataSetChanged()
-            setState(SeachResultState.OK)
+            setState(SearchResultStates.OK)
             hideKeyboard()
             binding.searchEditText.clearFocus()
         }
@@ -182,42 +168,39 @@ class SearchActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun searchTrack(){
+    private fun searchTrack() {
         binding.progressBar.visibility = View.VISIBLE
-        tracksService.search(binding.searchEditText.getText().toString()).enqueue(object : Callback<TracksResponse> {
-            override fun onResponse(call: Call<TracksResponse>,
-                                    response: Response<TracksResponse>
-            ) {
-                if (response.code() == 200) {
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        tracks.clear()
-                        tracks.addAll(response.body()?.results!!)
-                        trackAdapter.notifyDataSetChanged()
-                        setState(SeachResultState.OK)
-                    } else {
-                        tracks.clear()
-                        trackAdapter.notifyDataSetChanged()
-                        setState(SeachResultState.NOT_FUND)
-                    }
 
-                } else {
-                    tracks.clear()
-                    trackAdapter.notifyDataSetChanged()
-                    setState(SeachResultState.ERROR)
+        tracksSearchInteractor.searchTracks(binding.searchEditText.getText().toString().trim(),
+            object : TracksSearchInteractor.TrackConsumer {
+                override fun consume(foundTracks: List<Track>?) {
+                    handler.post { handleSearchResult(foundTracks) }
                 }
-            }
-
-            override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                setState(SeachResultState.ERROR)
-            }
-        })
+            })
     }
 
-    private fun setState(state: SeachResultState) {
+    private fun handleSearchResult(foundTracks: List<Track>?) {
+        tracks.clear()
+
+        if (foundTracks == null) {
+            setState(SearchResultStates.ERROR)
+        } else{
+            if (tracks.isNotEmpty()) {
+                tracks.addAll(foundTracks)
+                setState(SearchResultStates.OK)
+            } else {
+                setState(SearchResultStates.NOT_FUND)
+            }
+        }
+
+        trackAdapter.notifyDataSetChanged()
+    }
+
+    private fun setState(state: SearchResultStates) {
         binding.progressBar.visibility = View.GONE
-        binding.rvTrack.visibility = getVisibilityState(state == SeachResultState.OK)
-        binding.llNotFoundSearch.visibility = getVisibilityState(state == SeachResultState.NOT_FUND)
-        binding.llErrorSearch.visibility = getVisibilityState(state == SeachResultState.ERROR)
+        binding.rvTrack.visibility = getVisibilityState(state == SearchResultStates.OK)
+        binding.llNotFoundSearch.visibility = getVisibilityState(state == SearchResultStates.NOT_FUND)
+        binding.llErrorSearch.visibility = getVisibilityState(state == SearchResultStates.ERROR)
     }
 
     private fun getVisibilityState(isVisible: Boolean): Int {

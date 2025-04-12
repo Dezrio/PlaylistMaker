@@ -3,7 +3,7 @@ package com.example.playlistmaker
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import dataclasses.Track
+import com.example.playlistmaker.domain.models.Track
 import java.lang.reflect.Type
 
 
