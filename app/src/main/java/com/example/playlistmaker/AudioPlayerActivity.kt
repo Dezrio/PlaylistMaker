@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.App.Companion.TRACK_KEY
+import com.example.playlistmaker.creator.AudioPlayerCreator
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.google.gson.Gson
 import com.example.playlistmaker.domain.models.Track
@@ -20,13 +21,11 @@ import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
-    private val player = MediaPlayer()
-    private var playerState = STATE_DEFAULT
+    private val audioPlayerInteractorImpl = AudioPlayerCreator.provideAudioPlayerInteractor()
 
     private val setTrackCurTimeRunnable = object : Runnable {
         override fun run() {
-            binding.tvTrackCurrentTime.text = SimpleDateFormat(TRACK_TIME_PATTERN, Locale.getDefault())
-                .format(player.currentPosition)
+            binding.tvTrackCurrentTime.text = audioPlayerInteractorImpl.getCurrentPosition()
             handler.postDelayed(this, SET_CURRENT_TRACK_TIME_DELAY_MILLIS)
         }
     }
@@ -51,7 +50,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         val track: Track? = extras?.let { Gson().fromJson(extras.getString(TRACK_KEY), Track::class.java) }
 
         Glide.with(this)
-            .load(track?.getCoverArtwork() ?: "")
+            .load(track?.artworkUrl512  ?: "")
             .centerInside()
             .transform(RoundedCorners(8))
             .placeholder(R.drawable.player_placeholder)
@@ -60,8 +59,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.tvTrackName.text = track?.trackName ?: getString(R.string.not_found_search_text)
         binding.tvArtistName.text = track?.artistName ?: getString(R.string.not_found_search_text)
         binding.tvTrackCurrentTime.text = getString(R.string.track_time_placeholder)
-        binding.tvTrackDurationText.text = track?.getTrackTime() ?: getString(R.string.not_found_search_text)
-        binding.tvYearText.text = track?.getTrackYear() ?: getString(R.string.not_found_search_text)
+        binding.tvTrackDurationText.text = track?.trackTime ?: getString(R.string.not_found_search_text)
+        binding.tvYearText.text = track?.releaseDate ?: getString(R.string.not_found_search_text)
         binding.tvGenreText.text = track?.primaryGenreName ?: getString(R.string.not_found_search_text)
         binding.tvCountryText.text = track?.country ?: getString(R.string.not_found_search_text)
 
@@ -79,67 +78,55 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         binding.ibtnPlay.setOnClickListener {
-            if (playerState != STATE_DEFAULT) {
-                playerControl()
-            } else {
-                binding.tvAlbum.visibility = View.GONE
-                binding.tvAlbumText.visibility = View.GONE
-            }
+            playerControl()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        playerPause()
+        audioPlayerInteractorImpl.playerPause({
+            handler.removeCallbacks(setTrackCurTimeRunnable)
+            binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+        })
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        player.release()
+        audioPlayerInteractorImpl.playerRelease()
     }
 
     private fun preparePlayer(trackUrl: String) {
-        player.setDataSource(trackUrl)
-        player.prepareAsync()
-        player.setOnPreparedListener {
-            binding.ibtnPlay.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        player.setOnCompletionListener {
-            binding.ibtnPlay.setImageResource(R.drawable.ic_play)
-            handler.removeCallbacks(setTrackCurTimeRunnable)
-            binding.tvTrackCurrentTime.text  = getString(R.string.track_time_placeholder)
-            playerState = STATE_PREPARED
-        }
+        audioPlayerInteractorImpl.playerPrepare(
+            trackUrl,
+            {
+                binding.ibtnPlay.isEnabled = true
+            },
+            {
+                binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+                handler.removeCallbacks(setTrackCurTimeRunnable)
+                binding.tvTrackCurrentTime.text  = getString(R.string.track_time_placeholder)
+            }
+        )
     }
 
     private fun playerControl() {
-        when (playerState) {
-            STATE_PLAYING -> playerPause()
-            STATE_PREPARED, STATE_PAUSED -> playerStart()
-        }
-    }
-
-    private fun playerStart() {
-        player.start()
-        handler.post(setTrackCurTimeRunnable)
-        binding.ibtnPlay.setImageResource(R.drawable.ic_pause)
-        playerState = STATE_PLAYING
-    }
-
-    private fun playerPause() {
-        player.pause()
-        handler.removeCallbacks(setTrackCurTimeRunnable)
-        binding.ibtnPlay.setImageResource(R.drawable.ic_play)
-        playerState = STATE_PAUSED
+        audioPlayerInteractorImpl.playerControl(
+            {
+                handler.post(setTrackCurTimeRunnable)
+                binding.ibtnPlay.setImageResource(R.drawable.ic_pause)
+            },
+            {
+                handler.removeCallbacks(setTrackCurTimeRunnable)
+                binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+            },
+            {
+                binding.tvAlbum.visibility = View.GONE
+                binding.tvAlbumText.visibility = View.GONE
+            }
+        )
     }
 
     private companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-        const val TRACK_TIME_PATTERN = "mm:ss"
         const val SET_CURRENT_TRACK_TIME_DELAY_MILLIS = 500L
     }
 }

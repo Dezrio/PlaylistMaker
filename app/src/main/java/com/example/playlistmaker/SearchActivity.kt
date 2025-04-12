@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.App.Companion.TRACK_KEY
+import com.example.playlistmaker.creator.HistoryCreator
 import com.example.playlistmaker.creator.SearchCreator
 import com.example.playlistmaker.data.enums.SearchResultStates
 import com.example.playlistmaker.databinding.ActivitySearchBinding
@@ -26,6 +27,7 @@ import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
     private val tracksSearchInteractor = SearchCreator.provideTracksSearchInteractor()
+    private val tracksHistoryInteractor = HistoryCreator.provideTracksHistoryInteractor((applicationContext as App).getSharedPreferences())
 
     private var searchText: String = ""
     private var tracks: MutableList<Track> = mutableListOf()
@@ -33,7 +35,6 @@ class SearchActivity : AppCompatActivity() {
     private val searchRunnable = Runnable { searchTrack() }
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackHistoryAdapter: TrackAdapter
-    private lateinit var searchHistoryHandler: SearchHistoryHandler
     private lateinit var binding: ActivitySearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +56,7 @@ class SearchActivity : AppCompatActivity() {
         binding.rvTrack.adapter = trackAdapter
         binding.rvTrack.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        searchHistoryHandler = SearchHistoryHandler((applicationContext as App).getSharedPreferences())
-        trackHistoryAdapter = TrackAdapter(searchHistoryHandler.getSearchHistoryTracks(), ::openAudioPlayer)
+        trackHistoryAdapter = TrackAdapter(tracksHistoryInteractor.getHistory().toMutableList(), ::openAudioPlayer)
         binding.rvTrackHistory.adapter = trackHistoryAdapter
         binding.rvTrackHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
@@ -102,7 +102,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.btnClearTrackHistory.setOnClickListener{
-            searchHistoryHandler.clearSearchHistory()
+            tracksHistoryInteractor.clearHistory()
             trackHistoryAdapter.notifyDataSetChanged()
             binding.llTrackHistory.visibility = View.GONE
             hideKeyboard()
@@ -127,7 +127,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun changeTrackHistoryVisibility(){
         binding.llTrackHistory.visibility =
-            if (binding.searchEditText.hasFocus() && binding.searchEditText.text.isEmpty() && searchHistoryHandler.getSearchHistoryTracks().size != 0)
+            if (binding.searchEditText.hasFocus() && binding.searchEditText.text.isEmpty() && tracksHistoryInteractor.getHistory().size != 0)
                 View.VISIBLE
             else View.GONE
     }
@@ -154,7 +154,7 @@ class SearchActivity : AppCompatActivity() {
         if (!clickDebounce())
             return
 
-        searchHistoryHandler.saveTrack(track)
+        tracksHistoryInteractor.updateHistory(track)
         trackHistoryAdapter.notifyDataSetChanged()
         openAudioPlayer(track, true)
     }
