@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -23,7 +23,7 @@ import com.example.playlistmaker.data.enums.SearchResultStates
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.api.interactor.TracksSearchInteractor
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.presentation.TrackAdapter
+import com.example.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
@@ -127,10 +127,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun changeTrackHistoryVisibility(){
-        binding.llTrackHistory.visibility =
-            if (binding.searchEditText.hasFocus() && binding.searchEditText.text.isEmpty() && tracksHistoryInteractor.getHistory().size != 0)
-                View.VISIBLE
-            else View.GONE
+        binding.llTrackHistory.isVisible =
+            (binding.searchEditText.hasFocus() && binding.searchEditText.text.isEmpty() && tracksHistoryInteractor.getHistory().size != 0)
     }
 
     private fun searchDebounce() {
@@ -190,7 +188,7 @@ class SearchActivity : AppCompatActivity() {
                 tracks.addAll(foundTracks)
                 setState(SearchResultStates.OK)
             } else {
-                setState(SearchResultStates.NOT_FUND)
+                setState(SearchResultStates.NOT_FOUND)
             }
         }
 
@@ -200,7 +198,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setState(state: SearchResultStates) {
         binding.progressBar.visibility = View.GONE
         binding.rvTrack.visibility = getVisibilityState(state == SearchResultStates.OK)
-        binding.llNotFoundSearch.visibility = getVisibilityState(state == SearchResultStates.NOT_FUND)
+        binding.llNotFoundSearch.visibility = getVisibilityState(state == SearchResultStates.NOT_FOUND)
         binding.llErrorSearch.visibility = getVisibilityState(state == SearchResultStates.ERROR)
     }
 

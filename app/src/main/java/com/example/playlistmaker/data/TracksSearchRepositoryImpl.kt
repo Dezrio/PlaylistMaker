@@ -2,7 +2,7 @@ package com.example.playlistmaker.data
 
 import com.example.playlistmaker.data.dto.TracksSearchRequest
 import com.example.playlistmaker.data.dto.TracksSearchResponse
-import com.example.playlistmaker.data.network.consts.SearchResponseStates.Companion.SUCCESS
+import com.example.playlistmaker.data.network.consts.SearchResponseStates.SUCCESS
 import com.example.playlistmaker.domain.api.repository.TracksSearchRepository
 import com.example.playlistmaker.domain.models.Track
 

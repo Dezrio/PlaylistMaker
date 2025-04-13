@@ -12,12 +12,10 @@ class TracksHistoryRepositoryImpl(private val application: Application) : Tracks
 
     override fun getHistory(): List<Track> {
         val json = application.getSharedPreferences(HISTORY_SHARED_PREFERENCES_FILE, MODE_PRIVATE).getString(HISTORY_TRACK_LIST_KEY, null)
-        return if (json != null) {
+        return json?.let {
             val type: Type = object : TypeToken<List<Track>>() {}.type
-            Gson().fromJson(json, type) ?: listOf()
-        } else {
-            listOf()
-        }
+            Gson().fromJson(json, type) ?: emptyList()
+        } ?: emptyList()
     }
 
     override fun updateHistory(tracks: List<Track>) {
