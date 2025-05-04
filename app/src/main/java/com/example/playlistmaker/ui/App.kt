@@ -1,10 +1,10 @@
 package com.example.playlistmaker.ui
 
 import android.app.Application
-import com.example.playlistmaker.creator.HistoryCreator
-import com.example.playlistmaker.creator.LinkManagerCreator
-import com.example.playlistmaker.creator.SettingsCreator
-import com.example.playlistmaker.domain.api.interactor.SettingsInteractor
+import com.example.playlistmaker.creator.search.HistoryCreator
+import com.example.playlistmaker.creator.sharing.LinkManagerCreator
+import com.example.playlistmaker.creator.settings.SettingsCreator
+import com.example.playlistmaker.domain.settings.api.interactor.SettingsInteractor
 
 class App : Application() {
     private lateinit var settingsInteractorImpl: SettingsInteractor
