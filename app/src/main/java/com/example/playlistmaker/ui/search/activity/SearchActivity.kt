@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
@@ -81,7 +82,7 @@ class SearchActivity : AppCompatActivity() {
         binding.btnClearTrackHistory.setOnClickListener{
             viewModel.clearHistory()
             trackHistoryAdapter.notifyDataSetChanged()
-            binding.llTrackHistory.visibility = View.GONE
+            binding.llTrackHistory.isVisible = false
             hideKeyboard()
         }
 
@@ -110,7 +111,7 @@ class SearchActivity : AppCompatActivity() {
                     setErrorScreenState()
                 }
                 is ScreenState.TextEnterScreenState -> {
-                    setErrorScreenState()
+                    setTextEnterScreenState()
                 }
             }
         }
@@ -132,7 +133,7 @@ class SearchActivity : AppCompatActivity() {
         binding.rvTrackHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         viewModel.getTracksHistoryLiveData().observe(this) { tracks ->
-            trackAdapter.updateTracks(tracks)
+            trackHistoryAdapter.updateTracks(tracks)
         }
     }
 
@@ -146,6 +147,8 @@ class SearchActivity : AppCompatActivity() {
             isErrorVisible = false,
             isClearTextVisible = false
         )
+
+        binding.searchEditText.setText(getString(R.string.empty_string))
     }
 
     private fun setLoadingScreenState(){
@@ -202,6 +205,12 @@ class SearchActivity : AppCompatActivity() {
         )
     }
 
+    private fun setTextEnterScreenState(){
+        setScreenState(
+            isClearTextVisible = true
+        )
+    }
+
     private fun setScreenState(isProgressBarVisible: Boolean? = null,
                                isTrackListVisible: Boolean? = null,
                                isTrackHistoryListVisible: Boolean? = null,
@@ -210,7 +219,7 @@ class SearchActivity : AppCompatActivity() {
                                isClearTextVisible: Boolean? = null){
         isProgressBarVisible?.let { binding.progressBar.isVisible = isProgressBarVisible }
         isTrackListVisible?.let { binding.rvTrack.isVisible = isTrackListVisible }
-        isTrackHistoryListVisible?.let { binding.rvTrackHistory.isVisible = isTrackHistoryListVisible }
+        isTrackHistoryListVisible?.let { binding.llTrackHistory.isVisible = isTrackHistoryListVisible }
         isNotFoundVisible?.let { binding.llNotFoundSearch.isVisible = isNotFoundVisible }
         isErrorVisible?.let { binding.llErrorSearch.isVisible = isErrorVisible }
         isClearTextVisible?.let { binding.clearText.isVisible = isClearTextVisible }
@@ -222,7 +231,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openAudioPlayer(trackId: Int) {
         val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra(TRACK_KEY, Gson().toJson(trackId))
+        intent.putExtra(TRACK_KEY, trackId)
         startActivity(intent)
     }
 

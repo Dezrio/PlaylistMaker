@@ -42,7 +42,8 @@ class AudioPlayerViewModel(
             trackCurrentTime = audioPlayerInteractor.getCurrentPosition()
             audioPlayerLiveData.postValue(AudioPlayerData(
                 track,
-                AudioPlayerState.STATE_PLAYING
+                AudioPlayerState.STATE_PLAYING,
+                trackCurrentTime
             ))
             handler.postDelayed(this, SET_CURRENT_TRACK_TIME_DELAY_MILLIS)
         }
@@ -112,6 +113,7 @@ class AudioPlayerViewModel(
 
     private fun completionCallback() {
         handler.removeCallbacks(setTrackCurTimeRunnable)
+        trackCurrentTime = DEFAULT_CUR_TIME
         audioPlayerLiveData.postValue(AudioPlayerData(
             track,
             AudioPlayerState.STATE_PREPARED,

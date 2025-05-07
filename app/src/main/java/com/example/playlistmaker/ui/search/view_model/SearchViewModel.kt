@@ -122,7 +122,7 @@ class SearchViewModel(
         tracksHistoryInteractor.updateHistory(track)
         tracksHistory.clear()
         tracksHistory.addAll(tracksHistoryInteractor.getHistory().toMutableList())
-        tracksHistoryLiveData.postValue(tracksHistory)
+        tracksHistoryLiveData.postValue(tracksHistoryInteractor.getHistory().toMutableList())
     }
 
     private var isClickAllowed = true
@@ -141,7 +141,7 @@ class SearchViewModel(
     fun clearHistory() {
         tracksHistoryInteractor.clearHistory()
         tracksHistory.clear()
-        tracksHistoryLiveData.postValue(tracksHistory)
+        tracksHistoryLiveData.postValue(tracksHistoryInteractor.getHistory().toMutableList())
     }
 
     companion object {
