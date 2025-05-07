@@ -8,5 +8,4 @@ sealed class ScreenState {
     data object LoadingScreenState : ScreenState()
     data object NotFoundScreenState : ScreenState()
     data object ErrorScreenState : ScreenState()
-    data object AudioPlayerState : ScreenState()
 }

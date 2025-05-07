@@ -3,8 +3,6 @@ package com.example.playlistmaker.ui.search.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -17,13 +15,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.search.enums.SearchResultStates
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.domain.search.api.interactor.TracksSearchInteractor
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
 import com.example.playlistmaker.ui.player.activity.AudioPlayerActivity
 import com.example.playlistmaker.ui.search.adapter.TrackAdapter
+import com.example.playlistmaker.ui.search.view_model.ScreenState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.google.gson.Gson
 
@@ -87,6 +84,36 @@ class SearchActivity : AppCompatActivity() {
             binding.llTrackHistory.visibility = View.GONE
             hideKeyboard()
         }
+
+        viewModel.getEventLiveData().observe(this) { trackId ->
+            trackId?.let { openAudioPlayer(trackId) }
+        }
+
+        viewModel.getScreenSateLiveData().observe(this) { screenState ->
+            when (screenState){
+                is ScreenState.DefaultScreenState -> {
+                    setDefaultScreenState()
+                }
+                is ScreenState.LoadingScreenState -> {
+                    setLoadingScreenState()
+                }
+                is ScreenState.TrackScreenState -> {
+                    setTrackScreenState()
+                }
+                is ScreenState.TrackHistoryScreenState -> {
+                    setTrackHistoryScreenState()
+                }
+                is ScreenState.NotFoundScreenState -> {
+                    setNotFoundScreenState()
+                }
+                is ScreenState.ErrorScreenState -> {
+                    setErrorScreenState()
+                }
+                is ScreenState.TextEnterScreenState -> {
+                    setErrorScreenState()
+                }
+            }
+        }
     }
 
     private fun initAdapter(){
@@ -94,8 +121,8 @@ class SearchActivity : AppCompatActivity() {
         binding.rvTrack.adapter = trackAdapter
         binding.rvTrack.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        viewModel.getTrackLiveData().observe(this) {
-
+        viewModel.getTrackLiveData().observe(this) { tracks ->
+            trackAdapter.updateTracks(tracks)
         }
     }
 
@@ -104,81 +131,98 @@ class SearchActivity : AppCompatActivity() {
         binding.rvTrackHistory.adapter = trackHistoryAdapter
         binding.rvTrackHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+        viewModel.getTracksHistoryLiveData().observe(this) { tracks ->
+            trackAdapter.updateTracks(tracks)
+        }
     }
 
     private fun setDefaultScreenState(){
+        hideKeyboard()
         setScreenState(
-            false,
-            false,
-            false,
-            false,
-            false)
+            isProgressBarVisible = false,
+            isTrackListVisible = false,
+            isTrackHistoryListVisible = false,
+            isNotFoundVisible = false,
+            isErrorVisible = false,
+            isClearTextVisible = false
+        )
     }
 
     private fun setLoadingScreenState(){
+        hideKeyboard()
         setScreenState(
-            true,
-            false,
-            false,
-            false,
-            false)
+            isProgressBarVisible = true,
+            isTrackListVisible = false,
+            isTrackHistoryListVisible = false,
+            isNotFoundVisible = false,
+            isErrorVisible = false,
+            isClearTextVisible = true
+        )
     }
 
     private fun setTrackScreenState(){
+        hideKeyboard()
         setScreenState(
-            false,
-            true,
-            false,
-            false,
-            false)
+            isProgressBarVisible = false,
+            isTrackListVisible = true,
+            isTrackHistoryListVisible = false,
+            isNotFoundVisible = false,
+            isErrorVisible = false,
+            isClearTextVisible = true
+        )
     }
 
     private fun setTrackHistoryScreenState(){
         setScreenState(
-            false,
-            false,
-            true,
-            false,
-            false)
+            isProgressBarVisible = false,
+            isTrackListVisible = false,
+            isTrackHistoryListVisible = true,
+            isNotFoundVisible = false,
+            isErrorVisible = false
+        )
     }
 
     private fun setNotFoundScreenState(){
         setScreenState(
-            false,
-            false,
-            false,
-            true,
-            false)
+            isProgressBarVisible = false,
+            isTrackListVisible = false,
+            isTrackHistoryListVisible = false,
+            isNotFoundVisible = true,
+            isErrorVisible = false
+        )
     }
 
     private fun setErrorScreenState(){
         setScreenState(
-            false,
-            false,
-            false,
-            false,
-            true)
+            isProgressBarVisible = false,
+            isTrackListVisible = false,
+            isTrackHistoryListVisible = false,
+            isNotFoundVisible = false,
+            isErrorVisible = true
+        )
     }
 
-    private fun setScreenState(isProgressBarVisible: Boolean,
-                               isTrackListVisible: Boolean,
-                               isTrackHistoryListVisible: Boolean,
-                               isNotFoundVisible: Boolean,
-                               isErrorVisible: Boolean){
-        binding.progressBar.isVisible = isProgressBarVisible
-        binding.rvTrack.isVisible = isTrackListVisible
-        binding.rvTrackHistory.isVisible = isTrackHistoryListVisible
-        binding.llNotFoundSearch.isVisible = isNotFoundVisible
-        binding.llErrorSearch.isVisible = isErrorVisible
+    private fun setScreenState(isProgressBarVisible: Boolean? = null,
+                               isTrackListVisible: Boolean? = null,
+                               isTrackHistoryListVisible: Boolean? = null,
+                               isNotFoundVisible: Boolean? = null,
+                               isErrorVisible: Boolean? = null,
+                               isClearTextVisible: Boolean? = null){
+        isProgressBarVisible?.let { binding.progressBar.isVisible = isProgressBarVisible }
+        isTrackListVisible?.let { binding.rvTrack.isVisible = isTrackListVisible }
+        isTrackHistoryListVisible?.let { binding.rvTrackHistory.isVisible = isTrackHistoryListVisible }
+        isNotFoundVisible?.let { binding.llNotFoundSearch.isVisible = isNotFoundVisible }
+        isErrorVisible?.let { binding.llErrorSearch.isVisible = isErrorVisible }
+        isClearTextVisible?.let { binding.clearText.isVisible = isClearTextVisible }
     }
 
     private fun onTrackClick(track: Track){
         viewModel.onTrackClick(track)
     }
 
-    private fun openAudioPlayer(track: Track, isAfterSave: Boolean = false){
+    private fun openAudioPlayer(trackId: Int) {
         val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra(TRACK_KEY, Gson().toJson(track))
+        intent.putExtra(TRACK_KEY, Gson().toJson(trackId))
         startActivity(intent)
     }
 

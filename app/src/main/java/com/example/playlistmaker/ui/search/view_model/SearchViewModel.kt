@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.search.view_model
 
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -15,15 +14,18 @@ import com.example.playlistmaker.creator.search.SearchCreator
 import com.example.playlistmaker.domain.search.api.interactor.TracksHistoryInteractor
 import com.example.playlistmaker.domain.search.api.interactor.TracksSearchInteractor
 import com.example.playlistmaker.domain.search.models.Track
-import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
-import com.example.playlistmaker.ui.player.activity.AudioPlayerActivity
-import com.google.gson.Gson
+import com.example.playlistmaker.util.EventLiveData
 
 class SearchViewModel(
     private val tracksSearchInteractor: TracksSearchInteractor,
     private val tracksHistoryInteractor: TracksHistoryInteractor
 ) : ViewModel() {
     private var oldSeachText: String = ""
+    private val eventLiveData = EventLiveData<Int?>()
+
+    init {
+        eventLiveData.postValue(null)
+    }
 
     private var tracks: MutableList<Track> = mutableListOf()
     private val tracksHistory: MutableList<Track> = tracksHistoryInteractor.getHistory().toMutableList()
@@ -38,6 +40,7 @@ class SearchViewModel(
     fun getScreenSateLiveData(): LiveData<ScreenState> = screenStateLiveData
     fun getTrackLiveData(): LiveData<List<Track>> = trackLiveData
     fun getTracksHistoryLiveData(): LiveData<List<Track>> = tracksHistoryLiveData
+    fun getEventLiveData(): LiveData<Int?> = eventLiveData
 
     fun onSearchTextChange(newSearchText: String?){
         if (oldSeachText == newSearchText)
@@ -54,9 +57,9 @@ class SearchViewModel(
 
     fun onSearchTextFocusChange(hasFocus: Boolean){
         if (hasFocus && oldSeachText.isEmpty() && tracksHistory.isNotEmpty())
-            screenStateLiveData.value = ScreenState.TrackHistoryScreenState
-        else (!hasFocus && oldSeachText.isEmpty())
-            screenStateLiveData.value = ScreenState.DefaultScreenState
+            screenStateLiveData.postValue(ScreenState.TrackHistoryScreenState)
+        else if (!hasFocus && oldSeachText.isEmpty())
+            screenStateLiveData.postValue(ScreenState.DefaultScreenState)
     }
 
     private fun searchDebounce() {
@@ -112,7 +115,7 @@ class SearchViewModel(
         if (!tracksHistory.any { it.trackId == track.trackId })
             saveTrack(track)
 
-
+        eventLiveData.postValue(track.trackId)
     }
 
     private fun saveTrack(track: Track) {
@@ -120,16 +123,6 @@ class SearchViewModel(
         tracksHistory.clear()
         tracksHistory.addAll(tracksHistoryInteractor.getHistory().toMutableList())
         tracksHistoryLiveData.postValue(tracksHistory)
-        openAudioPlayer(track, true)
-    }
-
-    private fun openAudioPlayer(track: Track, isAfterSave: Boolean = false){
-        if (!clickDebounce() && !isAfterSave)
-            return
-
-        val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra(TRACK_KEY, Gson().toJson(track))
-        startActivity(intent)
     }
 
     private var isClickAllowed = true
@@ -143,6 +136,12 @@ class SearchViewModel(
         }
 
         return current
+    }
+
+    fun clearHistory() {
+        tracksHistoryInteractor.clearHistory()
+        tracksHistory.clear()
+        tracksHistoryLiveData.postValue(tracksHistory)
     }
 
     companion object {

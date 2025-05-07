@@ -18,7 +18,7 @@ class SettingsViewModel(
     private val themeLiveData = SingleEventLiveData<Boolean>()
 
     init {
-        themeLiveData.value = settingsInteractor.isDarkTheme()
+        themeLiveData.postValue(settingsInteractor.isDarkTheme())
     }
 
     fun getThemeLiveData(): LiveData<Boolean> = themeLiveData

@@ -2,11 +2,12 @@ package com.example.playlistmaker.domain.player.impl
 
 import android.media.MediaPlayer
 import com.example.playlistmaker.domain.player.api.interactor.AudioPlayerInteractor
+import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerInteractor {
-    private var playerState = STATE_DEFAULT
+    private var playerState = AudioPlayerState.STATE_DEFAULT
 
     override fun playerPrepare(
         resourceUrl: String,
@@ -17,11 +18,11 @@ class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerIn
         player.prepareAsync()
         player.setOnPreparedListener {
             preparedCallback()
-            playerState = STATE_PREPARED
+            playerState = AudioPlayerState.STATE_PREPARED
         }
         player.setOnCompletionListener {
             completionCallback()
-            playerState = STATE_PREPARED
+            playerState = AudioPlayerState.STATE_PREPARED
         }
     }
 
@@ -31,10 +32,10 @@ class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerIn
         defaultCallback: () -> Unit
     ) {
         when (playerState) {
-            STATE_PREPARED, STATE_PAUSED -> {
+            AudioPlayerState.STATE_PREPARED, AudioPlayerState.STATE_PAUSED -> {
                 playerStart(startCallback)
             }
-            STATE_PLAYING -> {
+            AudioPlayerState.STATE_PLAYING -> {
                 playerPause(pauseCallback)
             }
             else -> {
@@ -47,13 +48,13 @@ class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerIn
     override fun playerStart(startCallback: () -> Unit) {
         player.start()
         startCallback()
-        playerState = STATE_PLAYING
+        playerState = AudioPlayerState.STATE_PLAYING
     }
 
     override fun playerPause(pauseCallback: () -> Unit) {
         player.pause()
         pauseCallback()
-        playerState = STATE_PAUSED
+        playerState = AudioPlayerState.STATE_PAUSED
     }
 
     override fun playerRelease() {
@@ -66,10 +67,6 @@ class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerIn
     }
 
     private companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
         const val TRACK_TIME_PATTERN = "mm:ss"
     }
 }

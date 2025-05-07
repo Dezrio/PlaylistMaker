@@ -1,32 +1,25 @@
 package com.example.playlistmaker.ui.player.activity
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
-import com.example.playlistmaker.creator.player.AudioPlayerCreator
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
-import com.google.gson.Gson
+import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
+import com.example.playlistmaker.ui.player.view_model.AudioPlayerViewModel
 
 class AudioPlayerActivity : AppCompatActivity() {
-    private val handler = Handler(Looper.getMainLooper())
-    private val audioPlayerInteractorImpl = AudioPlayerCreator.provideAudioPlayerInteractor()
 
-    private val setTrackCurTimeRunnable = object : Runnable {
-        override fun run() {
-            binding.tvTrackCurrentTime.text = audioPlayerInteractorImpl.getCurrentPosition()
-            handler.postDelayed(this, SET_CURRENT_TRACK_TIME_DELAY_MILLIS)
-        }
-    }
+    private lateinit var viewModel: AudioPlayerViewModel
     private lateinit var binding: ActivityAudioPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +37,67 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        val extras = getIntent().getExtras();
-        val track: Track? = extras?.let { Gson().fromJson(extras.getString(TRACK_KEY), Track::class.java) }
+        val trackId: Int = getIntent().getExtras()?.getInt(TRACK_KEY) ?: -1;
 
+        viewModel = ViewModelProvider(
+            this,
+            AudioPlayerViewModel.getViewModelFactory(trackId)
+        )[AudioPlayerViewModel::class.java]
+
+        viewModel.getAudioPlayerLiveData().observe(this) { data ->
+            when (data.audioPlayerState) {
+                AudioPlayerState.STATE_DEFAULT -> {
+                    showDefaultState(data.track, data.trackCurTime)
+                }
+
+                AudioPlayerState.STATE_PREPARED -> {
+                    showPreparedState(data.trackCurTime)
+                }
+
+                AudioPlayerState.STATE_PLAYING -> {
+                    showPlayingState(data.trackCurTime)
+                }
+
+                AudioPlayerState.STATE_PAUSED -> {
+                    showPauseState(data.trackCurTime)
+                }
+            }
+        }
+
+        binding.ibtnPlay.setOnClickListener {
+            viewModel.playerControl()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.playerPause()
+    }
+
+    private fun showDefaultState(track: Track?, trackCurTime: String){
+        binding.tvAlbum.isVisible = false
+        binding.tvAlbumText.isVisible = false
+        binding.tvTrackCurrentTime.text  = trackCurTime
+        trackInit(track)
+    }
+
+    private fun showPreparedState(trackCurTime: String){
+        binding.ibtnPlay.isEnabled = true
+        binding.tvTrackCurrentTime.text  = trackCurTime
+        binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+    }
+
+    private fun showPlayingState(trackCurTime: String){
+        binding.tvTrackCurrentTime.text  = trackCurTime
+        binding.ibtnPlay.setImageResource(R.drawable.ic_pause)
+    }
+
+    private fun showPauseState(trackCurTime: String){
+        binding.tvTrackCurrentTime.text  = trackCurTime
+        binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+    }
+
+    private fun trackInit(track: Track?) {
         Glide.with(this)
             .load(track?.artworkUrl512  ?: "")
             .centerInside()
@@ -64,67 +115,11 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         if (track?.collectionName != null) {
             binding.tvAlbumText.text = track.collectionName
-            binding.tvAlbum.visibility = View.VISIBLE
-            binding.tvAlbumText.visibility = View.VISIBLE
+            binding.tvAlbum.isVisible = true
+            binding.tvAlbumText.isVisible = true
         } else {
-            binding.tvAlbum.visibility = View.GONE
-            binding.tvAlbumText.visibility = View.GONE
+            binding.tvAlbum.isVisible = false
+            binding.tvAlbumText.isVisible = false
         }
-
-        if (track?.previewUrl != null) {
-            preparePlayer(track.previewUrl)
-        }
-
-        binding.ibtnPlay.setOnClickListener {
-            playerControl()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        audioPlayerInteractorImpl.playerPause({
-            handler.removeCallbacks(setTrackCurTimeRunnable)
-            binding.ibtnPlay.setImageResource(R.drawable.ic_play)
-        })
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        audioPlayerInteractorImpl.playerRelease()
-    }
-
-    private fun preparePlayer(trackUrl: String) {
-        audioPlayerInteractorImpl.playerPrepare(
-            trackUrl,
-            {
-                binding.ibtnPlay.isEnabled = true
-            },
-            {
-                binding.ibtnPlay.setImageResource(R.drawable.ic_play)
-                handler.removeCallbacks(setTrackCurTimeRunnable)
-                binding.tvTrackCurrentTime.text  = getString(R.string.track_time_placeholder)
-            }
-        )
-    }
-
-    private fun playerControl() {
-        audioPlayerInteractorImpl.playerControl(
-            {
-                handler.post(setTrackCurTimeRunnable)
-                binding.ibtnPlay.setImageResource(R.drawable.ic_pause)
-            },
-            {
-                handler.removeCallbacks(setTrackCurTimeRunnable)
-                binding.ibtnPlay.setImageResource(R.drawable.ic_play)
-            },
-            {
-                binding.tvAlbum.visibility = View.GONE
-                binding.tvAlbumText.visibility = View.GONE
-            }
-        )
-    }
-
-    private companion object {
-        const val SET_CURRENT_TRACK_TIME_DELAY_MILLIS = 500L
     }
 }
