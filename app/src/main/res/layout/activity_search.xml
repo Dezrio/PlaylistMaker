@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     style="@style/SecondLayout"
-    tools:context=".SearchActivity">
+    tools:context=".ui.search.activity.SearchActivity">
 
     <FrameLayout
         style="@style/HeaderFrame"
