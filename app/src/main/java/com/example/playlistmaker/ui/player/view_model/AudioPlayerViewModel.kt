@@ -5,11 +5,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.player.AudioPlayerCreator
-import com.example.playlistmaker.creator.search.HistoryCreator
 import com.example.playlistmaker.domain.player.api.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import com.example.playlistmaker.domain.search.api.interactor.TracksHistoryInteractor
@@ -124,20 +119,12 @@ class AudioPlayerViewModel(
     override fun onCleared() {
         super.onCleared()
         handler.removeCallbacks(setTrackCurTimeRunnable)
+        handler.removeCallbacksAndMessages(null)
         audioPlayerInteractor.playerRelease()
     }
 
     companion object {
         const val DEFAULT_CUR_TIME = "00:00"
         const val SET_CURRENT_TRACK_TIME_DELAY_MILLIS = 500L
-        fun getViewModelFactory(trackId: Int): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(
-                    trackId,
-                    AudioPlayerCreator.provideAudioPlayerInteractor(),
-                    HistoryCreator.provideTracksHistoryInteractor()
-                )
-            }
-        }
     }
 }

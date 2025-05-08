@@ -45,6 +45,7 @@ android {
 
 dependencies {
 
+    implementation("io.insert-koin:koin-android:3.3.0")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
