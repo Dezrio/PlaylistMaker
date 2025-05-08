@@ -16,10 +16,16 @@ import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
 import com.example.playlistmaker.ui.player.view_model.AudioPlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.parameter.parametersOf
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: AudioPlayerViewModel
+    private var trackId: Int = -1
+    private val viewModel: AudioPlayerViewModel by lazy {
+        getViewModel { parametersOf(trackId) }
+    }
+
     private lateinit var binding: ActivityAudioPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,12 +43,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        val trackId: Int = getIntent().getExtras()?.getInt(TRACK_KEY) ?: -1;
-
-        viewModel = ViewModelProvider(
-            this,
-            AudioPlayerViewModel.getViewModelFactory(trackId)
-        )[AudioPlayerViewModel::class.java]
+        trackId = getIntent().getExtras()?.getInt(TRACK_KEY) ?: -1;
 
         viewModel.getAudioPlayerLiveData().observe(this) { data ->
             when (data.audioPlayerState) {

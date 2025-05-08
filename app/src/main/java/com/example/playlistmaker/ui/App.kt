@@ -1,30 +1,31 @@
 package com.example.playlistmaker.ui
 
 import android.app.Application
-import com.example.playlistmaker.creator.search.HistoryCreator
-import com.example.playlistmaker.creator.sharing.LinkManagerCreator
-import com.example.playlistmaker.creator.settings.SettingsCreator
+import com.example.playlistmaker.di.DataModule
+import com.example.playlistmaker.di.InteractorModule
+import com.example.playlistmaker.di.RepositoryModule
+import com.example.playlistmaker.di.ViewModelModule
 import com.example.playlistmaker.domain.settings.api.interactor.SettingsInteractor
+import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
-    private lateinit var settingsInteractorImpl: SettingsInteractor
-
-    override fun onCreate() {
+     override fun onCreate() {
         super.onCreate()
 
-        HistoryCreator.initApplication(this)
-        LinkManagerCreator.initApplication(this)
-        SettingsCreator.initApplication(this)
+        startKoin {
+            androidContext(this@App)
+            modules(DataModule, RepositoryModule, InteractorModule, ViewModelModule)
+        }
 
-        settingsInteractorImpl = SettingsCreator.provideSettingsInteractor()
-        switchTheme(settingsInteractorImpl.isDarkTheme())
-    }
-
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        settingsInteractorImpl.switchTheme(darkThemeEnabled)
+        val settingsInteractorImpl: SettingsInteractor = getKoin().get()
+        settingsInteractorImpl.switchTheme(settingsInteractorImpl.isDarkTheme())
     }
 
     companion object {
         const val TRACK_KEY:String = "TRACK_KEY"
+        const val DI_SHARED_PREFS_SETTINGS :String = "DI_SHARED_PREFS_SETTINGS "
+        const val DI_SHARED_PREFS_HISTORY :String = "DI_SHARED_PREFS_HISTORY "
     }
 }
