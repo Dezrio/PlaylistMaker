@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     style="@style/SecondLayout"
-    tools:context=".ui.settings.SettingsActivity">
+    tools:context=".ui.settings.activity.SettingsActivity">
 
     <FrameLayout
         style="@style/HeaderFrame">
