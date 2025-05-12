@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fr_playlists"
+    style="@style/SecondLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn_new_playlist"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:textColor="?attr/colorPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimension_24"
+        android:text="@string/media_library_btn_new_playlist"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_tags="iv_not_found_image, tv_not_found_text" />
+
+    <ImageView
+        android:id="@+id/iv_not_found_image"
+        style="@style/NotFoundSearchIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTag="iv_error_image"
+        app:layout_constraintTop_toBottomOf="@id/btn_new_playlist" />
+
+    <TextView
+        android:id="@+id/tv_not_found_text"
+        style="@style/MediumTextColorMainStyle"
+        android:textSize="19sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dimension_24"
+        android:layout_marginTop="@dimen/dimension_16"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTag="tv_error_message"
+        app:layout_constraintTop_toBottomOf="@id/iv_not_found_image" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
