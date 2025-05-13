@@ -6,6 +6,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:orientation">vertical</item>
         <item name="android:padding">5dp</item>
+        <item name="android:background">?attr/colorPrimary</item>
     </style>
     <!--SecondLayoutEnd-->
 
@@ -176,5 +177,24 @@
         <item name="android:textColor">@color/color_main</item>
     </style>
     <!--AudioPlayerEnd-->
+
+    <!--MediaLibrary-->>
+    <style name="TabStyle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+    <style name="BaseCustomTabLayout" parent="Widget.Material3.TabLayout">
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabIndicatorGravity">bottom</item>
+        <item name="tabIndicatorFullWidth">true</item>
+    </style>
+    <style name="CustomTabLayout" parent="BaseCustomTabLayout">
+        <item name="tabIndicatorColor">@color/color_main</item>
+        <item name="tabTextColor">@color/color_main</item>
+        <item name="backgroundColor">@color/color_main</item>
+        <item name="android:background">@color/color_main</item>
+    </style>
+    <!--MediaLibrary-->>
 
 </resources>
