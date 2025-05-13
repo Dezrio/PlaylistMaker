@@ -30,7 +30,6 @@
         tools:layout="@layout/activity_audio_player" >
         <argument
             android:name="trackId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            app:argType="integer" />
     </activity>
 </navigation>

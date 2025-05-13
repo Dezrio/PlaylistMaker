@@ -22,4 +22,5 @@
 
     <color name="progress_bar">#3772E7</color>
     <color name="navigation_bar">#3772E7</color>
+    <color name="divider">#E6E8EB</color>
 </resources>
