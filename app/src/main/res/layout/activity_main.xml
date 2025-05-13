@@ -1,41 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    style="@style/MainLayout">
+    style="@style/MainLayout"
+    tools:context=".ui.main.MainActivity">
 
-    <TextView
-        android:theme="@style/Theme.PlaylistMaker.Main"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/header_height"
-        android:layout_gravity="start"
-        android:layout_marginStart="@dimen/main_padding"
-        android:layout_marginTop="10dp"
-        android:text="@string/app_name"
-        android:textColor="@color/white"
-        android:textSize="@dimen/btn_text_size" />
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_menu"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/navigation_graph"
+        app:defaultNavHost="true" />
 
-    <Button
-        android:id="@+id/searchBtn"
-        style="@style/MainButton"
-        android:layout_marginTop="@dimen/main_padding"
-        android:layout_marginBottom="@dimen/main_padding_between"
-        android:text="@string/btn_search"
-        app:icon="@drawable/search" />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_menu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navigation_menu"
+        style="@style/BottomNavigationViewStyle"/>
 
-    <Button
-        android:id="@+id/libraryBtn"
-        style="@style/MainButton"
-        android:layout_marginVertical="@dimen/main_padding_between"
-        android:text="@string/btn_library"
-        app:icon="@drawable/library" />
-
-    <Button
-        android:id="@+id/settingsBtn"
-        style="@style/MainButton"
-        android:layout_marginTop="@dimen/main_padding_between"
-        android:layout_marginBottom="@dimen/main_padding"
-        android:text="@string/btn_settings"
-        app:icon="@drawable/settings" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

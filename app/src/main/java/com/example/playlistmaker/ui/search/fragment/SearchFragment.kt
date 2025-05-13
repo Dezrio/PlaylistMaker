@@ -1,48 +1,40 @@
-package com.example.playlistmaker.ui.search.activity
+package com.example.playlistmaker.ui.search.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.search.models.Track
-import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
-import com.example.playlistmaker.ui.player.activity.AudioPlayerActivity
 import com.example.playlistmaker.ui.search.adapter.TrackAdapter
 import com.example.playlistmaker.ui.search.view_model.ScreenState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
+import com.example.playlistmaker.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private val viewModel: SearchViewModel by viewModel()
 
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackHistoryAdapter: TrackAdapter
-    private lateinit var binding: ActivitySearchBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSearchBinding {
+        return FragmentSearchBinding.inflate(inflater, container, false)
+    }
 
-        binding.settingsArrowBack.setOnClickListener {
-            finish()
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initAdapter()
         initHistoryAdapter()
@@ -81,11 +73,11 @@ class SearchActivity : AppCompatActivity() {
             hideKeyboard()
         }
 
-        viewModel.getEventLiveData().observe(this) { trackId ->
+        viewModel.getEventLiveData().observe(viewLifecycleOwner) { trackId ->
             trackId?.let { openAudioPlayer(trackId) }
         }
 
-        viewModel.getScreenSateLiveData().observe(this) { screenState ->
+        viewModel.getScreenSateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState){
                 is ScreenState.DefaultScreenState -> {
                     setDefaultScreenState()
@@ -115,9 +107,9 @@ class SearchActivity : AppCompatActivity() {
     private fun initAdapter(){
         trackAdapter = TrackAdapter { onTrackClick(it) }
         binding.rvTrack.adapter = trackAdapter
-        binding.rvTrack.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.rvTrack.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        viewModel.getTrackLiveData().observe(this) { tracks ->
+        viewModel.getTrackLiveData().observe(viewLifecycleOwner) { tracks ->
             trackAdapter.updateTracks(tracks)
         }
     }
@@ -125,9 +117,9 @@ class SearchActivity : AppCompatActivity() {
     private fun initHistoryAdapter(){
         trackHistoryAdapter = TrackAdapter { onTrackClick(it) }
         binding.rvTrackHistory.adapter = trackHistoryAdapter
-        binding.rvTrackHistory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.rvTrackHistory.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        viewModel.getTracksHistoryLiveData().observe(this) { tracks ->
+        viewModel.getTracksHistoryLiveData().observe(viewLifecycleOwner) { tracks ->
             trackHistoryAdapter.updateTracks(tracks)
         }
     }
@@ -225,13 +217,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun openAudioPlayer(trackId: Int) {
-        val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra(TRACK_KEY, trackId)
-        startActivity(intent)
+        val action = SearchFragmentDirections.actionSearchFragmentToAudioPlayerActivity(trackId)
+        findNavController().navigate(action)
     }
 
     private fun hideKeyboard() {
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 }
