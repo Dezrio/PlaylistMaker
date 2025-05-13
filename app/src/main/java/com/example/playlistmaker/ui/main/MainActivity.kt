@@ -1,38 +1,46 @@
 package com.example.playlistmaker.ui.main
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.ui.medialibrary.activity.MediaLibraryActivity
-import com.example.playlistmaker.ui.search.activity.SearchActivity
-import com.example.playlistmaker.ui.settings.activity.SettingsActivity
+import com.example.playlistmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        findViewById<Button>(R.id.searchBtn).setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
-        }
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        findViewById<Button>(R.id.libraryBtn).setOnClickListener {
-            startActivity(Intent(this, MediaLibraryActivity::class.java))
-        }
+        binding.bottomNavigationMenu.setupWithNavController(navController)
 
-        findViewById<Button>(R.id.settingsBtn).setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+        navController.addOnDestinationChangedListener{
+                _, destination, _ ->
+            when(destination.id){
+                R.id.audioPlayerActivity -> {
+                    binding.bottomNavigationMenu.isVisible = false
+                }
+                else -> {
+                    binding.bottomNavigationMenu.isVisible = true
+                }
+            }
         }
     }
 }
