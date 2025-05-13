@@ -79,11 +79,11 @@
     <!--AudioPlayerEnd-->
 
     <!--MediaLibrary-->>
-    <style name="CustomTabLayout" parent="Widget.MaterialComponents.TabLayout">
+    <style name="CustomTabLayout" parent="BaseCustomTabLayout">
         <item name="tabIndicatorColor">@color/white</item>
-        <item name="tabIndicatorHeight">2dp</item>
-        <item name="tabIndicatorGravity">bottom</item>
         <item name="tabTextColor">@color/white</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="android:background">@color/white</item>
     </style>
     <!--MediaLibrary-->>
 </resources>
