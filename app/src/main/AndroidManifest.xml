@@ -19,17 +19,18 @@
             android:name=".ui.player.activity.AudioPlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.medialibrary.activity.MediaLibraryActivity"
+            android:name=".ui.medialibrary.fragment.MediaLibraryFragment"
             android:exported="false" />
         <activity
-            android:name=".ui.search.activity.SearchActivity"
+            android:name=".ui.search.fragment.SearchFragment"
             android:exported="false" />
         <activity
-            android:name=".ui.settings.activity.SettingsActivity"
+            android:name=".ui.settings.fragment.SettingsFragment"
             android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

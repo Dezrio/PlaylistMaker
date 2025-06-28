@@ -11,9 +11,6 @@
     <!--HeaderEnd-->
 
     <!--Main-->
-    <style name="MainLayout" parent="MainLayoutBase">
-        <item name="android:backgroundTint">@color/color_main</item>
-    </style>
     <!--MainEnd-->
 
     <!--Settings-->

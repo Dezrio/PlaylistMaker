@@ -4,14 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     style="@style/SecondLayout"
-    tools:context=".ui.medialibrary.activity.MediaLibraryActivity">
+    tools:context=".ui.medialibrary.fragment.MediaLibraryFragment">
 
     <FrameLayout
         style="@style/HeaderFrame">
-
-        <ImageView
-            android:id="@+id/settings_arrow_back"
-            style="@style/HeaderImage" />
 
         <TextView
             style="@style/HeaderText"
