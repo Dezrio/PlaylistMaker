@@ -11,9 +11,6 @@
     <!--HeaderEnd-->
 
     <!--Main-->
-    <style name="MainLayout" parent="MainLayoutBase">
-        <item name="android:backgroundTint">@color/color_main</item>
-    </style>
     <!--MainEnd-->
 
     <!--Settings-->
@@ -77,4 +74,13 @@
         <item name="android:textColor">@color/white</item>
     </style>
     <!--AudioPlayerEnd-->
+
+    <!--MediaLibrary-->>
+    <style name="CustomTabLayout" parent="BaseCustomTabLayout">
+        <item name="tabIndicatorColor">@color/white</item>
+        <item name="tabTextColor">@color/white</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="android:background">@color/white</item>
+    </style>
+    <!--MediaLibrary-->>
 </resources>

@@ -1,25 +1,30 @@
 package com.example.playlistmaker.ui.player.activity
 
 import android.os.Bundle
-import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import com.example.playlistmaker.domain.search.models.Track
-import com.example.playlistmaker.ui.App.Companion.TRACK_KEY
 import com.example.playlistmaker.ui.player.view_model.AudioPlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.parameter.parametersOf
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: AudioPlayerViewModel
+    private var trackId: Int = -1
+    private val args: AudioPlayerActivityArgs by navArgs()
+    private val viewModel: AudioPlayerViewModel by lazy {
+        getViewModel { parametersOf(trackId) }
+    }
+
     private lateinit var binding: ActivityAudioPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,12 +42,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        val trackId: Int = getIntent().getExtras()?.getInt(TRACK_KEY) ?: -1;
-
-        viewModel = ViewModelProvider(
-            this,
-            AudioPlayerViewModel.getViewModelFactory(trackId)
-        )[AudioPlayerViewModel::class.java]
+        trackId = args.trackId
 
         viewModel.getAudioPlayerLiveData().observe(this) { data ->
             when (data.audioPlayerState) {
