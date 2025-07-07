@@ -1,24 +1,26 @@
 package com.example.playlistmaker.ui.player.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.player.api.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import com.example.playlistmaker.domain.search.api.interactor.TracksHistoryInteractor
 import com.example.playlistmaker.domain.search.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel(
     private val trackId: Int,
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    private val tracksHistoryInteractor: TracksHistoryInteractor
+    tracksHistoryInteractor: TracksHistoryInteractor
 ) : ViewModel() {
     private var  trackCurrentTime: String = DEFAULT_CUR_TIME
 
     private val track: Track? = tracksHistoryInteractor.getHistory().find { track -> track.trackId == trackId }
-    private val handler = Handler(Looper.getMainLooper())
+
     private val audioPlayerLiveData = MutableLiveData(AudioPlayerData(
         track,
         AudioPlayerState.STATE_DEFAULT,
@@ -29,18 +31,6 @@ class AudioPlayerViewModel(
             audioPlayerInteractor.playerPrepare(track.previewUrl,
                 { preparedCallback() },
                 { completionCallback() })
-        }
-    }
-
-    private val setTrackCurTimeRunnable = object : Runnable {
-        override fun run() {
-            trackCurrentTime = audioPlayerInteractor.getCurrentPosition()
-            audioPlayerLiveData.postValue(AudioPlayerData(
-                track,
-                AudioPlayerState.STATE_PLAYING,
-                trackCurrentTime
-            ))
-            handler.postDelayed(this, SET_CURRENT_TRACK_TIME_DELAY_MILLIS)
         }
     }
 
@@ -55,7 +45,7 @@ class AudioPlayerViewModel(
     }
 
     fun playerPause() {
-        handler.removeCallbacks(setTrackCurTimeRunnable)
+        playerJob?.cancel()
 
         if (audioPlayerLiveData.value?.audioPlayerState == AudioPlayerState.STATE_PLAYING)
         {
@@ -68,18 +58,32 @@ class AudioPlayerViewModel(
         }
     }
 
+    private var playerJob: Job? = null
+
     private fun playerStartCallback() {
-        handler.removeCallbacks(setTrackCurTimeRunnable)
+        playerJob?.cancel()
         audioPlayerLiveData.postValue(AudioPlayerData(
             track,
             AudioPlayerState.STATE_PLAYING,
             trackCurrentTime
         ))
-        handler.post(setTrackCurTimeRunnable)
+
+        playerJob = viewModelScope.launch {
+            do {
+                delay(SET_CURRENT_TRACK_TIME_DELAY_MILLIS)
+
+                trackCurrentTime = audioPlayerInteractor.getCurrentPosition()
+                audioPlayerLiveData.postValue(AudioPlayerData(
+                    track,
+                    AudioPlayerState.STATE_PLAYING,
+                    trackCurrentTime
+                ))
+            } while((audioPlayerLiveData.value?.audioPlayerState ?: AudioPlayerState.STATE_DEFAULT) == AudioPlayerState.STATE_PLAYING)
+        }
     }
 
     private fun playerPauseCallback() {
-        handler.removeCallbacks(setTrackCurTimeRunnable)
+        playerJob?.cancel()
         audioPlayerLiveData.postValue(AudioPlayerData(
             track,
             AudioPlayerState.STATE_PAUSED,
@@ -89,7 +93,7 @@ class AudioPlayerViewModel(
 
     private fun playerDefaultCallback() {
         trackCurrentTime = DEFAULT_CUR_TIME
-        handler.removeCallbacks(setTrackCurTimeRunnable)
+        playerJob?.cancel()
         audioPlayerLiveData.postValue(AudioPlayerData(
             track,
             AudioPlayerState.STATE_DEFAULT,
@@ -107,7 +111,7 @@ class AudioPlayerViewModel(
     }
 
     private fun completionCallback() {
-        handler.removeCallbacks(setTrackCurTimeRunnable)
+        playerJob?.cancel()
         trackCurrentTime = DEFAULT_CUR_TIME
         audioPlayerLiveData.postValue(AudioPlayerData(
             track,
@@ -118,13 +122,12 @@ class AudioPlayerViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        handler.removeCallbacks(setTrackCurTimeRunnable)
-        handler.removeCallbacksAndMessages(null)
+        playerJob?.cancel()
         audioPlayerInteractor.playerRelease()
     }
 
     companion object {
         const val DEFAULT_CUR_TIME = "00:00"
-        const val SET_CURRENT_TRACK_TIME_DELAY_MILLIS = 500L
+        const val SET_CURRENT_TRACK_TIME_DELAY_MILLIS = 300L
     }
 }

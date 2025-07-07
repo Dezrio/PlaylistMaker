@@ -6,10 +6,16 @@ import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.search.api.interactor.TracksHistoryInteractor
 import com.example.playlistmaker.domain.search.api.interactor.TracksSearchInteractor
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.util.EventLiveData
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val tracksSearchInteractor: TracksSearchInteractor,
@@ -24,9 +30,6 @@ class SearchViewModel(
 
     private var tracks: MutableList<Track> = mutableListOf()
     private val tracksHistory: MutableList<Track> = tracksHistoryInteractor.getHistory().toMutableList()
-
-    private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { searchTrack(oldSeachText) }
 
     private val screenStateLiveData = MutableLiveData<ScreenState>(ScreenState.DefaultScreenState)
     private val trackLiveData = MutableLiveData<List<Track>>(tracks)
@@ -57,24 +60,30 @@ class SearchViewModel(
             screenStateLiveData.postValue(ScreenState.DefaultScreenState)
     }
 
-    private fun searchDebounce() {
-        handler.removeCallbacksAndMessages(SEARCH_TOKEN)
+    private var searchJob: Job? = null
 
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_TOKEN,
-            SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        )
+    private fun searchDebounce() {
+        searchJob?.cancel()
+
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchTrack(oldSeachText)
+        }
     }
 
     private fun searchTrack(trackName: String) {
+        searchJob?.cancel()
+
         screenStateLiveData.postValue(ScreenState.LoadingScreenState)
-        tracksSearchInteractor.searchTracks(trackName,
-            object : TracksSearchInteractor.TrackConsumer {
-                override fun consume(foundTracks: List<Track>?) {
+
+        searchJob = viewModelScope.launch {
+            tracksSearchInteractor
+                .searchTracks(trackName)
+                .cancellable()
+                .collect { foundTracks ->
                     handleSearchResult(foundTracks)
                 }
-            })
+        }
     }
 
     fun refreshSearch(){
@@ -83,7 +92,7 @@ class SearchViewModel(
 
     fun clearSearchText(){
         tracks.clear()
-        handler.removeCallbacksAndMessages(SEARCH_TOKEN)
+        searchJob?.cancel()
         screenStateLiveData.postValue(ScreenState.DefaultScreenState)
     }
 
@@ -127,7 +136,11 @@ class SearchViewModel(
 
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
 
         return current
@@ -140,12 +153,11 @@ class SearchViewModel(
     }
 
     override fun onCleared() {
-        handler.removeCallbacksAndMessages(null)
+        searchJob?.cancel()
         super.onCleared()
     }
 
     companion object {
-        private val SEARCH_TOKEN = Any()
         const val CLICK_DEBOUNCE_DELAY = 1000L
         const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
