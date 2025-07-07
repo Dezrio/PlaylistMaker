@@ -2,6 +2,8 @@ package com.example.playlistmaker.di
 
 import android.app.Application.MODE_PRIVATE
 import android.media.MediaPlayer
+import androidx.room.Room
+import com.example.playlistmaker.data.favorites.AppDatabase
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.search.network.TracksAPIService
@@ -17,6 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 private const val BASE_URL_ITUNES = "https://itunes.apple.com"
 private const val HISTORY_SHARED_PREFERENCES_FILE = "HISTORY_SHARED_PREFERENCES_FILE"
 private const val SHARED_PREFERENCES_FILE = "SHARED_PREFERENCES_FILE"
+private const val DATABASE_DB = "DATABASE_DB"
 
 val DataModule = module {
     factory {
@@ -41,6 +44,11 @@ val DataModule = module {
 
     single(named(DI_SHARED_PREFS_SETTINGS)) {
         androidApplication().getSharedPreferences(SHARED_PREFERENCES_FILE, MODE_PRIVATE)
+    }
+
+    single {
+        Room.databaseBuilder(androidApplication(), AppDatabase::class.java, DATABASE_DB)
+            .build()
     }
 
     single<NetworkClient> {

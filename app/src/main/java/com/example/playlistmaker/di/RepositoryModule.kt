@@ -1,6 +1,7 @@
 package com.example.playlistmaker.di
 
 import android.content.res.Configuration
+import com.example.playlistmaker.data.favorites.converters.TrackDbConvertor
 import com.example.playlistmaker.data.search.TracksHistoryRepositoryImpl
 import com.example.playlistmaker.data.search.TracksSearchRepositoryImpl
 import com.example.playlistmaker.data.settings.SettingsRepositoryImpl
@@ -32,5 +33,9 @@ val RepositoryModule = module {
 
     single<LinkManagerInteractorImpl> {
         LinkManagerInteractorImpl(androidApplication())
+    }
+
+    factory {
+        TrackDbConvertor()
     }
 }
