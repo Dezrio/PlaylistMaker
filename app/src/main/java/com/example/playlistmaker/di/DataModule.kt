@@ -4,6 +4,7 @@ import android.app.Application.MODE_PRIVATE
 import android.media.MediaPlayer
 import androidx.room.Room
 import com.example.playlistmaker.data.favorites.AppDatabase
+import com.example.playlistmaker.data.favorites.dao.TrackDao
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.search.network.TracksAPIService
@@ -49,6 +50,10 @@ val DataModule = module {
     single {
         Room.databaseBuilder(androidApplication(), AppDatabase::class.java, DATABASE_DB)
             .build()
+    }
+
+    single<TrackDao> {
+        get<AppDatabase>().trackDao()
     }
 
     single<NetworkClient> {

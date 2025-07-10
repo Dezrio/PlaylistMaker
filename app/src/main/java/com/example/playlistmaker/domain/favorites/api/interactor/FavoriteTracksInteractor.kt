@@ -11,4 +11,6 @@ interface FavoriteTracksInteractor {
     fun getAllTracks(): Flow<List<Track>>
 
     fun getTrackById(trackId: Int): Flow<Track>
+
+    fun isFavorite(trackId: Int): Flow<Boolean>
 }

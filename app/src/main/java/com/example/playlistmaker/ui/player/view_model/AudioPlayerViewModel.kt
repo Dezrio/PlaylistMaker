@@ -11,14 +11,16 @@ import com.example.playlistmaker.domain.search.models.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AudioPlayerViewModel(
     private var track: Track,
     private val audioPlayerInteractor: AudioPlayerInteractor,
     private val favoriteTracksInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
-    private var  trackCurrentTime: String = DEFAULT_CUR_TIME
+    private var trackCurrentTime: String = DEFAULT_CUR_TIME
 
     private val audioPlayerLiveData = MutableLiveData(AudioPlayerData(
         track,
@@ -26,8 +28,8 @@ class AudioPlayerViewModel(
     ))
 
     init {
-        track.previewUrl?.let {
-            audioPlayerInteractor.playerPrepare(track.previewUrl!!,
+        track.previewUrl?.let { url ->
+            audioPlayerInteractor.preparePlayer(url,
                 { preparedCallback() },
                 { completionCallback() })
         }
@@ -36,7 +38,7 @@ class AudioPlayerViewModel(
     fun getAudioPlayerLiveData(): LiveData<AudioPlayerData> = audioPlayerLiveData
 
     fun playerControl() {
-        audioPlayerInteractor.playerControl(
+        audioPlayerInteractor.controlPlayer(
             { playerStartCallback() },
             { playerPauseCallback() },
             { playerDefaultCallback() }
@@ -48,7 +50,7 @@ class AudioPlayerViewModel(
 
         if (audioPlayerLiveData.value?.audioPlayerState == AudioPlayerState.STATE_PLAYING)
         {
-            audioPlayerInteractor.playerPause { playerPauseCallback() }
+            audioPlayerInteractor.pausePlayer { playerPauseCallback() }
             audioPlayerLiveData.postValue(AudioPlayerData(
                 track,
                 AudioPlayerState.STATE_PAUSED,
@@ -101,12 +103,21 @@ class AudioPlayerViewModel(
     }
 
     private fun preparedCallback() {
-        trackCurrentTime = DEFAULT_CUR_TIME
-        audioPlayerLiveData.postValue(AudioPlayerData(
-            track,
-            AudioPlayerState.STATE_PREPARED,
-            trackCurrentTime
-        ))
+        viewModelScope.launch {
+            favoriteTracksInteractor.isFavorite(trackId = track.trackId)
+                .flowOn(Dispatchers.IO)
+                .collect { isFavorite ->
+                    withContext(Dispatchers.Main) {
+                        track.isFavorite = isFavorite
+                        trackCurrentTime = DEFAULT_CUR_TIME
+                        audioPlayerLiveData.postValue(AudioPlayerData(
+                            track,
+                            AudioPlayerState.STATE_PREPARED,
+                            trackCurrentTime
+                        ))
+                    }
+                }
+        }
     }
 
     private fun completionCallback() {
@@ -126,19 +137,21 @@ class AudioPlayerViewModel(
             else
                 favoriteTracksInteractor.saveTrack(track)
 
-            track.isFavorite = !track.isFavorite
+            withContext(Dispatchers.Main){
+                track.isFavorite = !track.isFavorite
 
-            audioPlayerLiveData.postValue(
-                audioPlayerLiveData.value?.copy(
-                    track = track,
-            ))
+                audioPlayerLiveData.postValue(
+                    audioPlayerLiveData.value?.copy(
+                        track = track
+                ))
+            }
         }
     }
 
     override fun onCleared() {
         super.onCleared()
         playerJob?.cancel()
-        audioPlayerInteractor.playerRelease()
+        audioPlayerInteractor.releasePlayer()
     }
 
     companion object {

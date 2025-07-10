@@ -1,27 +1,27 @@
 package com.example.playlistmaker.domain.player.api.interactor
 
 interface AudioPlayerInteractor {
-    fun playerPrepare(
+    fun preparePlayer(
         resourceUrl: String,
         preparedCallback: () -> Unit,
         completionCallback: () -> Unit
     )
 
-    fun playerControl(
+    fun controlPlayer(
         startCallback: () -> Unit,
         pauseCallback: () -> Unit,
         defaultCallback: () -> Unit
     )
 
-    fun playerStart(
+    fun startPlayer(
         startCallback: () -> Unit
     )
 
-    fun playerPause(
+    fun pausePlayer(
         pauseCallback: () -> Unit
     )
 
-    fun playerRelease()
+    fun releasePlayer()
 
     fun getCurrentPosition(): String
 }

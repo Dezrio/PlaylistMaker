@@ -25,4 +25,7 @@ interface TrackDao {
 
     @Query("SELECT * FROM favorite_track_table WHERE trackId = :id")
     fun getById(id: Int) : Flow<TrackEntity?>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM favorite_track_table WHERE trackId = :id)")
+    fun isFavorite(id: Int) : Flow<Boolean>
 }
