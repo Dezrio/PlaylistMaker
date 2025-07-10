@@ -73,8 +73,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             hideKeyboard()
         }
 
-        viewModel.getEventLiveData().observe(viewLifecycleOwner) { trackId ->
-            trackId?.let { openAudioPlayer(trackId) }
+        viewModel.getEventLiveData().observe(viewLifecycleOwner) { track ->
+            track?.let { openAudioPlayer(track) }
         }
 
         viewModel.getScreenSateLiveData().observe(viewLifecycleOwner) { screenState ->
@@ -216,8 +216,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         viewModel.onTrackClick(track)
     }
 
-    private fun openAudioPlayer(trackId: Int) {
-        val action = SearchFragmentDirections.actionSearchFragmentToAudioPlayerActivity(trackId)
+    private fun openAudioPlayer(track: Track) {
+        val action = SearchFragmentDirections.actionSearchFragmentToAudioPlayerActivity(track)
         findNavController().navigate(action)
     }
 

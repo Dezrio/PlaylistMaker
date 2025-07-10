@@ -106,8 +106,8 @@
 
         <ImageButton
             android:id="@+id/ibtnLike"
-            style="@style/CommonPlayerButton"
-            android:src="@drawable/ic_like"
+            style="@style/LikePlayerButton"
+            android:src="@drawable/ic_like_selector"
             app:layout_constraintBottom_toBottomOf="@id/ibtnPlay"
             app:layout_constraintEnd_toEndOf="@id/rightBorder"
             app:layout_constraintStart_toEndOf="@id/ibtnPlay"

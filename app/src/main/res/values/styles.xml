@@ -164,7 +164,24 @@
         <item name="android:clickable">true</item>
         <item name="tint">@color/white</item>
     </style>
+    <style name="BaseCommonPlayerButtonTint" parent="BaseCommonPlayerButton">
+        <item name="android:layout_width">@dimen/btn_player_size</item>
+        <item name="android:layout_height">@dimen/btn_player_size</item>
+        <item name="android:background">@drawable/player_button</item>
+        <item name="android:clickable">true</item>
+        <item name="tint">@color/white</item>
+    </style>
     <style name="CommonPlayerButton" parent="BaseCommonPlayerButton">
+        <item name="backgroundTint">@color/color_main_25</item>
+    </style>
+    <style name="LikePlayerButtonBase" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">@dimen/btn_player_size</item>
+        <item name="android:layout_height">@dimen/btn_player_size</item>
+        <item name="android:background">@drawable/player_button</item>
+        <item name="android:clickable">true</item>
+        <item name="backgroundTint">@color/color_main_25</item>
+    </style>
+    <style name="LikePlayerButton" parent="LikePlayerButtonBase">
         <item name="backgroundTint">@color/color_main_25</item>
     </style>
     <style name="MediumTextColorMainStyle">

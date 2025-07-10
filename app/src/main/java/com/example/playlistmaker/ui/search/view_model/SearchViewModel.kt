@@ -22,7 +22,7 @@ class SearchViewModel(
     private val tracksHistoryInteractor: TracksHistoryInteractor
 ) : ViewModel() {
     private var oldSeachText: String = ""
-    private val eventLiveData = EventLiveData<Int?>()
+    private val eventLiveData = EventLiveData<Track>()
 
     init {
         eventLiveData.postValue(null)
@@ -38,7 +38,7 @@ class SearchViewModel(
     fun getScreenSateLiveData(): LiveData<ScreenState> = screenStateLiveData
     fun getTrackLiveData(): LiveData<List<Track>> = trackLiveData
     fun getTracksHistoryLiveData(): LiveData<List<Track>> = tracksHistoryLiveData
-    fun getEventLiveData(): LiveData<Int?> = eventLiveData
+    fun getEventLiveData(): LiveData<Track> = eventLiveData
 
     fun onSearchTextChange(newSearchText: String?){
         if (oldSeachText == newSearchText)
@@ -119,7 +119,7 @@ class SearchViewModel(
         if (!tracksHistory.any { it.trackId == track.trackId })
             saveTrack(track)
 
-        eventLiveData.postValue(track.trackId)
+        eventLiveData.postValue(track)
     }
 
     private fun saveTrack(track: Track) {

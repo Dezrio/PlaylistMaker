@@ -4,22 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.favorites.api.interactor.FavoriteTracksInteractor
 import com.example.playlistmaker.domain.player.api.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.domain.player.models.AudioPlayerState
-import com.example.playlistmaker.domain.search.api.interactor.TracksHistoryInteractor
 import com.example.playlistmaker.domain.search.models.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel(
-    private val trackId: Int,
+    private var track: Track,
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    tracksHistoryInteractor: TracksHistoryInteractor
+    private val favoriteTracksInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
     private var  trackCurrentTime: String = DEFAULT_CUR_TIME
-
-    private val track: Track? = tracksHistoryInteractor.getHistory().find { track -> track.trackId == trackId }
 
     private val audioPlayerLiveData = MutableLiveData(AudioPlayerData(
         track,
@@ -27,8 +26,8 @@ class AudioPlayerViewModel(
     ))
 
     init {
-        track?.previewUrl?.let {
-            audioPlayerInteractor.playerPrepare(track.previewUrl,
+        track.previewUrl?.let {
+            audioPlayerInteractor.playerPrepare(track.previewUrl!!,
                 { preparedCallback() },
                 { completionCallback() })
         }
@@ -118,6 +117,22 @@ class AudioPlayerViewModel(
             AudioPlayerState.STATE_PREPARED,
             trackCurrentTime
         ))
+    }
+
+    fun onFavoriteClick() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (track.isFavorite)
+                favoriteTracksInteractor.deleteTrack(track)
+            else
+                favoriteTracksInteractor.saveTrack(track)
+
+            track.isFavorite = !track.isFavorite
+
+            audioPlayerLiveData.postValue(
+                audioPlayerLiveData.value?.copy(
+                    track = track,
+            ))
+        }
     }
 
     override fun onCleared() {

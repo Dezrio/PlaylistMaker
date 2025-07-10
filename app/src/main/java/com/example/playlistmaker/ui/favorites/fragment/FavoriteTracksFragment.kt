@@ -1,82 +1,78 @@
 package com.example.playlistmaker.ui.favorites.fragment
 
-class FavoriteTracksFragment  : BindingFragment<FragmentFavoritesBinding>() {
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentFavouriteTracksBinding
+import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.ui.favorites.view_model.FavouriteTracksFragmentViewModel
+import com.example.playlistmaker.ui.favorites.view_model.FavouriteTracksScreenState
+import com.example.playlistmaker.ui.medialibrary.fragment.MediaLibraryFragmentDirections
+import com.example.playlistmaker.ui.search.adapter.TrackAdapter
+import com.example.playlistmaker.util.BindingFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-    private val viewModel: FavoritesViewModel by viewModel<FavoritesViewModel>()
+class FavoriteTracksFragment : BindingFragment<FragmentFavouriteTracksBinding>() {
+
+    private val viewModel: FavouriteTracksFragmentViewModel by viewModel()
 
     private lateinit var trackAdapter: TrackAdapter
 
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentFavoritesBinding {
-        return FragmentFavoritesBinding.inflate(inflater, container, false)
+    ): FragmentFavouriteTracksBinding {
+        return FragmentFavouriteTracksBinding.inflate(inflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        trackAdapter = TrackAdapter { onTrackClicked(it) }
+        trackAdapter = TrackAdapter { onTrackClick(it) }
         binding.rvTrackList.layoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.VERTICAL, false
         )
+
         binding.rvTrackList.adapter = trackAdapter
 
         viewModel.observeScreenState().observe(viewLifecycleOwner) { state ->
             when (state) {
-                is FavoritesScreenState.Loading -> showLoading()
-                is FavoritesScreenState.Empty -> showEmpty()
-                is FavoritesScreenState.Content -> showContent(state.tracks)
+                is FavouriteTracksScreenState.Loading -> setLoadingState()
+                is FavouriteTracksScreenState.NotFound -> setNotFoundState()
+                is FavouriteTracksScreenState.Found -> setFoundState(state.tracks)
             }
         }
 
-        viewModel.observeOnTrackClickedLiveData().observe(viewLifecycleOwner) { track ->
-            val action = LibraryFragmentDirections.actionLibraryFragmentToAudioPlayerActivity(
+        viewModel.observeOnTrackClickLiveData().observe(viewLifecycleOwner) { track ->
+            val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToAudioPlayerActivity(
                 track
             )
             parentFragment?.findNavController()?.navigate(action)
         }
     }
 
-    private fun onTrackClicked(track: Track) {
-        viewModel.onTrackClicked(track)
+    private fun onTrackClick(track: Track) {
+        viewModel.onTrackClick(track)
     }
 
-    private fun showLoading() {
+    private fun setLoadingState() {
         binding.rvTrackList.isVisible = false
         binding.groupEmpty.isVisible = false
+        binding.ivNotFoundImage.isVisible = false
+        binding.tvNotFoundText.isVisible = false
 
         binding.progressBarFavorites.isVisible = true
     }
 
-    private fun showEmpty() {
-        binding.rvTrackList.isVisible = false
-        binding.progressBarFavorites.isVisible = false
-
-        val emptyImageId: Int = getEmptyImageIdAccordingTheme(
-            R.drawable.ic_placeholder_nothing_found_lm_120,
-            R.drawable.ic_placeholder_nothing_found_dm_120
-        )
-
-        binding.ivErrorImage.setImageResource(emptyImageId)
-        binding.tvErrorMessage.text =
-            requireActivity().getString(R.string.empty_favorite_tracks_message)
-
-        binding.groupEmpty.isVisible = true
-    }
-
-    private fun getEmptyImageIdAccordingTheme(imageIdLightMode: Int, imageIdDarkMode: Int): Int {
-        return when (requireActivity().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> imageIdDarkMode
-
-            Configuration.UI_MODE_NIGHT_NO -> imageIdLightMode
-
-            else -> imageIdDarkMode
-        }
-    }
-
-    private fun showContent(tracks: List<Track>) {
+    private fun setFoundState(tracks: List<Track>) {
         binding.groupEmpty.isVisible = false
+        binding.ivNotFoundImage.isVisible = false
+        binding.tvNotFoundText.isVisible = false
         binding.progressBarFavorites.isVisible = false
 
         trackAdapter.updateTracks(tracks)
@@ -85,7 +81,7 @@ class FavoriteTracksFragment  : BindingFragment<FragmentFavoritesBinding>() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.updateFavoriteTracks()
+        viewModel.loadTracks()
     }
 
     override fun onDestroyView() {
@@ -93,7 +89,16 @@ class FavoriteTracksFragment  : BindingFragment<FragmentFavoritesBinding>() {
         super.onDestroyView()
     }
 
-    companion object {
-        fun newInstance(): FavoritesFragment = FavoritesFragment()
+    private fun setNotFoundState() {
+        binding.tvNotFoundText.text = requireActivity().getString(R.string.media_library_empty_favourite_tracks_text)
+        binding.groupEmpty.isVisible = true
+        binding.ivNotFoundImage.isVisible = true
+        binding.tvNotFoundText.isVisible = true
+        binding.rvTrackList.isVisible = false
+        binding.progressBarFavorites.isVisible = false
+    }
+
+    companion object{
+        fun newInstance() : FavoriteTracksFragment = FavoriteTracksFragment()
     }
 }

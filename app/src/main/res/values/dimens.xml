@@ -16,6 +16,8 @@
     <dimen name="dimension_16">16dp</dimen>
     <dimen name="dimension_17">17dp</dimen>
     <dimen name="dimension_24">24dp</dimen>
+    <dimen name="dimension_44">44dp</dimen>
+    <dimen name="dimension_140">140dp</dimen>
 
     <dimen name="btn_player_size">51dp</dimen>
     <dimen name="btn_play_player_size">100dp</dimen>
