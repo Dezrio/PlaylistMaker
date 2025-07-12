@@ -4,22 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.favorites.api.interactor.FavoriteTracksInteractor
 import com.example.playlistmaker.domain.player.api.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.domain.player.models.AudioPlayerState
-import com.example.playlistmaker.domain.search.api.interactor.TracksHistoryInteractor
 import com.example.playlistmaker.domain.search.models.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AudioPlayerViewModel(
-    private val trackId: Int,
+    private var track: Track,
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    tracksHistoryInteractor: TracksHistoryInteractor
+    private val favoriteTracksInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
-    private var  trackCurrentTime: String = DEFAULT_CUR_TIME
-
-    private val track: Track? = tracksHistoryInteractor.getHistory().find { track -> track.trackId == trackId }
+    private var trackCurrentTime: String = DEFAULT_CUR_TIME
 
     private val audioPlayerLiveData = MutableLiveData(AudioPlayerData(
         track,
@@ -27,8 +28,8 @@ class AudioPlayerViewModel(
     ))
 
     init {
-        track?.previewUrl?.let {
-            audioPlayerInteractor.playerPrepare(track.previewUrl,
+        track.previewUrl?.let { url ->
+            audioPlayerInteractor.preparePlayer(url,
                 { preparedCallback() },
                 { completionCallback() })
         }
@@ -37,7 +38,7 @@ class AudioPlayerViewModel(
     fun getAudioPlayerLiveData(): LiveData<AudioPlayerData> = audioPlayerLiveData
 
     fun playerControl() {
-        audioPlayerInteractor.playerControl(
+        audioPlayerInteractor.controlPlayer(
             { playerStartCallback() },
             { playerPauseCallback() },
             { playerDefaultCallback() }
@@ -49,7 +50,7 @@ class AudioPlayerViewModel(
 
         if (audioPlayerLiveData.value?.audioPlayerState == AudioPlayerState.STATE_PLAYING)
         {
-            audioPlayerInteractor.playerPause { playerPauseCallback() }
+            audioPlayerInteractor.pausePlayer { playerPauseCallback() }
             audioPlayerLiveData.postValue(AudioPlayerData(
                 track,
                 AudioPlayerState.STATE_PAUSED,
@@ -102,12 +103,21 @@ class AudioPlayerViewModel(
     }
 
     private fun preparedCallback() {
-        trackCurrentTime = DEFAULT_CUR_TIME
-        audioPlayerLiveData.postValue(AudioPlayerData(
-            track,
-            AudioPlayerState.STATE_PREPARED,
-            trackCurrentTime
-        ))
+        viewModelScope.launch {
+            favoriteTracksInteractor.isFavorite(trackId = track.trackId)
+                .flowOn(Dispatchers.IO)
+                .collect { isFavorite ->
+                    withContext(Dispatchers.Main) {
+                        track.isFavorite = isFavorite
+                        trackCurrentTime = DEFAULT_CUR_TIME
+                        audioPlayerLiveData.postValue(AudioPlayerData(
+                            track,
+                            AudioPlayerState.STATE_PREPARED,
+                            trackCurrentTime
+                        ))
+                    }
+                }
+        }
     }
 
     private fun completionCallback() {
@@ -120,10 +130,28 @@ class AudioPlayerViewModel(
         ))
     }
 
+    fun onFavoriteClick() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (track.isFavorite)
+                favoriteTracksInteractor.deleteTrack(track)
+            else
+                favoriteTracksInteractor.saveTrack(track)
+
+            withContext(Dispatchers.Main){
+                track.isFavorite = !track.isFavorite
+
+                audioPlayerLiveData.postValue(
+                    audioPlayerLiveData.value?.copy(
+                        track = track
+                ))
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         playerJob?.cancel()
-        audioPlayerInteractor.playerRelease()
+        audioPlayerInteractor.releasePlayer()
     }
 
     companion object {

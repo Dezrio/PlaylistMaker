@@ -19,10 +19,10 @@ import org.koin.core.parameter.parametersOf
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    private var trackId: Int = -1
+    private lateinit var track: Track
     private val args: AudioPlayerActivityArgs by navArgs()
     private val viewModel: AudioPlayerViewModel by lazy {
-        getViewModel { parametersOf(trackId) }
+        getViewModel { parametersOf(track) }
     }
 
     private lateinit var binding: ActivityAudioPlayerBinding
@@ -42,7 +42,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        trackId = args.trackId
+        track = args.track
 
         viewModel.getAudioPlayerLiveData().observe(this) { data ->
             when (data.audioPlayerState) {
@@ -51,21 +51,25 @@ class AudioPlayerActivity : AppCompatActivity() {
                 }
 
                 AudioPlayerState.STATE_PREPARED -> {
-                    showPreparedState(data.trackCurTime)
+                    showPreparedState(data.track, data.trackCurTime)
                 }
 
                 AudioPlayerState.STATE_PLAYING -> {
-                    showPlayingState(data.trackCurTime)
+                    showPlayingState(data.track, data.trackCurTime)
                 }
 
                 AudioPlayerState.STATE_PAUSED -> {
-                    showPauseState(data.trackCurTime)
+                    showPauseState(data.track, data.trackCurTime)
                 }
             }
         }
 
         binding.ibtnPlay.setOnClickListener {
             viewModel.playerControl()
+        }
+
+        binding.ibtnLike.setOnClickListener {
+            viewModel.onFavoriteClick()
         }
     }
 
@@ -74,25 +78,29 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.playerPause()
     }
 
-    private fun showDefaultState(track: Track?, trackCurTime: String){
+    private fun showDefaultState(track: Track, trackCurTime: String){
+        binding.ibtnLike.isSelected = track.isFavorite
         binding.tvAlbum.isVisible = false
         binding.tvAlbumText.isVisible = false
         binding.tvTrackCurrentTime.text  = trackCurTime
         trackInit(track)
     }
 
-    private fun showPreparedState(trackCurTime: String){
+    private fun showPreparedState(track: Track, trackCurTime: String){
+        binding.ibtnLike.isSelected = track.isFavorite
         binding.ibtnPlay.isEnabled = true
         binding.tvTrackCurrentTime.text  = trackCurTime
         binding.ibtnPlay.setImageResource(R.drawable.ic_play)
     }
 
-    private fun showPlayingState(trackCurTime: String){
+    private fun showPlayingState(track: Track, trackCurTime: String){
+        binding.ibtnLike.isSelected = track.isFavorite
         binding.tvTrackCurrentTime.text  = trackCurTime
         binding.ibtnPlay.setImageResource(R.drawable.ic_pause)
     }
 
-    private fun showPauseState(trackCurTime: String){
+    private fun showPauseState(track: Track, trackCurTime: String){
+        binding.ibtnLike.isSelected = track.isFavorite
         binding.tvTrackCurrentTime.text  = trackCurTime
         binding.ibtnPlay.setImageResource(R.drawable.ic_play)
     }
