@@ -17,7 +17,7 @@ data class TrackDto(
 {
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast(COVER_DELIMITER, COVER_REPLACEMENT)
 
-    fun getTrackTime(): String? = SimpleDateFormat(TRACK_TIME_FORMAT, Locale.getDefault()).format(trackTimeMillis)
+    fun getTrackTime(): String = SimpleDateFormat(TRACK_TIME_FORMAT, Locale.getDefault()).format(trackTimeMillis)
 
     fun getTrackYear(): String?{
         val parser = SimpleDateFormat(INPUT_DATE_FORMAT, Locale.getDefault())

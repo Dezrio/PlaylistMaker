@@ -9,7 +9,7 @@ import java.util.Locale
 class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerInteractor {
     private var playerState = AudioPlayerState.STATE_DEFAULT
 
-    override fun playerPrepare(
+    override fun preparePlayer(
         resourceUrl: String,
         preparedCallback: () -> Unit,
         completionCallback: () -> Unit
@@ -26,17 +26,17 @@ class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerIn
         }
     }
 
-    override fun playerControl(
+    override fun controlPlayer(
         startCallback: () -> Unit,
         pauseCallback: () -> Unit,
         defaultCallback: () -> Unit
     ) {
         when (playerState) {
             AudioPlayerState.STATE_PREPARED, AudioPlayerState.STATE_PAUSED -> {
-                playerStart(startCallback)
+                startPlayer(startCallback)
             }
             AudioPlayerState.STATE_PLAYING -> {
-                playerPause(pauseCallback)
+                pausePlayer(pauseCallback)
             }
             else -> {
                 defaultCallback()
@@ -45,19 +45,19 @@ class AudioPlayerInteractorImpl(private val player: MediaPlayer) : AudioPlayerIn
         }
     }
 
-    override fun playerStart(startCallback: () -> Unit) {
+    override fun startPlayer(startCallback: () -> Unit) {
         player.start()
         startCallback()
         playerState = AudioPlayerState.STATE_PLAYING
     }
 
-    override fun playerPause(pauseCallback: () -> Unit) {
+    override fun pausePlayer(pauseCallback: () -> Unit) {
         player.pause()
         pauseCallback()
         playerState = AudioPlayerState.STATE_PAUSED
     }
 
-    override fun playerRelease() {
+    override fun releasePlayer() {
         player.release()
     }
 
