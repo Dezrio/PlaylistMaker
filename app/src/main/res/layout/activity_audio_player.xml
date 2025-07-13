@@ -193,7 +193,7 @@
 
         <TextView
             android:id="@+id/tvTrackDurationText"
-            style="@style/RegularTextColorCommonStyle"
+            style="@style/RegularText13ColorCommonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimension_16"
@@ -207,7 +207,7 @@
 
         <TextView
             android:id="@+id/tvAlbumText"
-            style="@style/RegularTextColorCommonStyle"
+            style="@style/RegularText13ColorCommonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimension_16"
@@ -222,7 +222,7 @@
 
         <TextView
             android:id="@+id/tvYearText"
-            style="@style/RegularTextColorCommonStyle"
+            style="@style/RegularText13ColorCommonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimension_16"
@@ -237,7 +237,7 @@
 
         <TextView
             android:id="@+id/tvGenreText"
-            style="@style/RegularTextColorCommonStyle"
+            style="@style/RegularText13ColorCommonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimension_16"
@@ -252,7 +252,7 @@
 
         <TextView
             android:id="@+id/tvCountryText"
-            style="@style/RegularTextColorCommonStyle"
+            style="@style/RegularText13ColorCommonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dimension_16"

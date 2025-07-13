@@ -42,4 +42,44 @@
     <string name="media_library_empty_playlists_text">Вы не создали\nни одного плейлиста</string>
     <string name="media_library_btn_new_playlist">Новый плейлист</string>
 
+    <string name="playlist_title">Название*</string>
+    <string name="playlist_description">Описание</string>
+    <string name="btn_create_playlist">Создать</string>
+    <string name="back_title">Завершить создание плейлиста?</string>
+    <string name="back_message">Все несохраненные данные будут потеряны</string>
+    <string name="back_ok">Завершить</string>
+    <string name="back_cancel">Отмена</string>
+    <string name="permission_title">Перейти в настройки приложения?</string>
+    <string name="permission_message">Для загрузки фото необходимо предоставить разрешение</string>
+    <string name="permission_ok">Перейти</string>
+    <string name="permission_cancel">Отмена</string>
+    <string name="toast_playlist">Плейлист</string>
+    <string name="toast_created">создан</string>
+    <string name="toast_already_exists">уже существует</string>
+
+    <string name="playlist_title_test">Музыка для хорошего вечера</string>
+    <string name="playlist_tracks_count_test">5 треков</string>
+    <string name="playlist_cover_description">Обложка плейлиста</string>
+    <string name="menu_item_delete">Удалить</string>
+
+    <string name="bottom_sheet_player_title">Добавить в плейлист</string>
+    <string name="toast_success_adding_track_to_playlist">Добавлено в плейлист</string>
+    <string name="toast_track_already_exists_in_playlist">Трек уже добавлен в плейлист</string>
+
+    <string name="btn_add_playlist_title">Новый плейлист</string>
+
+    <string name="playlist_zero_tracks">треков</string>
+    <string name="playlist_one_track">трек</string>
+    <string name="playlist_few_tracks">трека</string>
+    <string name="playlist_many_tracks">треков</string>
+    <string name="playlist_other_tracks">треков</string>
+
+    <plurals name="track_plurals">
+        <item quantity="zero">%1$d треков</item>
+        <item quantity="one">%1$d трек</item>
+        <item quantity="two">%1$d трека</item>
+        <item quantity="few">%1$d трека</item>
+        <item quantity="many">%1$d треков</item>
+        <item quantity="other">%1$d треков</item>
+    </plurals>
 </resources>

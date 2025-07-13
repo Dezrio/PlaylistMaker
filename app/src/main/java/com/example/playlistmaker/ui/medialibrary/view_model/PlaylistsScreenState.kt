@@ -1,6 +1,9 @@
 package com.example.playlistmaker.ui.medialibrary.view_model
 
+import com.example.playlistmaker.domain.medialibrary.models.Playlist
+
 sealed interface PlaylistsScreenState {
-    data object Default: PlaylistsScreenState
+    data object Loading: PlaylistsScreenState
+    data class Found(val playlists: List<Playlist>): PlaylistsScreenState
     data object NotFound: PlaylistsScreenState
 }

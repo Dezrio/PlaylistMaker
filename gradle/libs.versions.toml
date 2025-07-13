@@ -20,6 +20,7 @@ retrofit = "2.9.0"
 roomRuntime = "2.7.2"
 kotlinKsp = "2.1.0-1.0.29"
 composeMaterialCore = "1.4.1"
+peko = "3.0.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,9 +46,11 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 androidx-compose-material-core = { group = "androidx.wear.compose", name = "compose-material-core", version.ref = "composeMaterialCore" }
+peko = { module = "com.markodevcic:peko", version.ref = "peko" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidx-navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationUiKtx" }
 kotlin-ksp = {id = "com.google.devtools.ksp",version.ref = "kotlinKsp"}
+androidx-room = {id = "androidx.room", version.ref = "roomRuntime"}
