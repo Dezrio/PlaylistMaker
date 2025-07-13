@@ -15,7 +15,7 @@
 
     <dimen name="dimension_1">1dp</dimen>
     <dimen name="dimension_4">4dp</dimen>
-    <dimen name="dimension_8">18dp</dimen>
+    <dimen name="dimension_8">8dp</dimen>
     <dimen name="dimension_12">12dp</dimen>
     <dimen name="dimension_13">13dp</dimen>
     <dimen name="dimension_16">16dp</dimen>

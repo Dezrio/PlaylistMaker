@@ -76,7 +76,7 @@
                 android:id="@+id/et_playlist_title"
                 style="@style/EditTextPlaylistBaseStyle"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dimension_56" />
+                android:layout_height="@dimen/dimension_50" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -97,23 +97,24 @@
                 android:id="@+id/et_playlist_description"
                 style="@style/EditTextPlaylistBaseStyle"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dimension_56" />
+                android:layout_height="@dimen/dimension_50" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btn_create_playlist"
             style="@style/BtnPlaylistColorStyle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/dimension_44"
             android:layout_marginHorizontal="@dimen/dimension_17"
-            android:layout_marginTop="@dimen/dimension_16"
             android:layout_marginBottom="@dimen/dimension_32"
+            android:layout_marginTop="170dp"
             android:enabled="false"
             android:text="@string/btn_create_playlist"
+            android:textAllCaps="false"
+            app:layout_constraintTop_toBottomOf="@id/til_playlist_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_playlist_description"
             app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

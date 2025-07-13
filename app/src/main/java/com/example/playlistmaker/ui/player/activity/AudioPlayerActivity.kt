@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.commit
 import androidx.navigation.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -17,6 +18,7 @@ import com.example.playlistmaker.domain.medialibrary.models.Playlist
 import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.medialibrary.adapter.PlaylistVerticalAdapter
+import com.example.playlistmaker.ui.medialibrary.fragment.AddPlaylistFragment
 import com.example.playlistmaker.ui.medialibrary.view_model.AddPlaylistResultScreenState
 import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsScreenState
 import com.example.playlistmaker.ui.player.view_model.AudioPlayerViewModel
@@ -150,6 +152,15 @@ class AudioPlayerActivity : AppCompatActivity() {
                             state.playlistTitle,
                     Snackbar.LENGTH_LONG
                 ).show()
+            }
+        }
+
+        binding.btnCreatePlaylist.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            supportFragmentManager.commit {
+                add(R.id.player_fragment_container, AddPlaylistFragment.newInstance())
+                setReorderingAllowed(true)
+                addToBackStack(null)
             }
         }
     }

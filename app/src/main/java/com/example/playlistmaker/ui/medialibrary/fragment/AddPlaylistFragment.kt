@@ -237,12 +237,28 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
             ContextCompat.getColorStateList(
                 requireContext(),
                 R.color.border_color_not_empty
-            )?.let { editText?.setBoxStrokeColorStateList(it) }
+            )?.let {
+                editText?.setBoxStrokeColorStateList(it)
+            }
+
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.border_color_not_empty
+            ).let {
+                binding.btnCreatePlaylist.setBackgroundColor(it)
+            }
         } else {
             ContextCompat.getColorStateList(
                 requireContext(),
                 R.color.border_color_empty
             )?.let { editText?.setBoxStrokeColorStateList(it) }
+
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.border_color_empty
+            ).let {
+                binding.btnCreatePlaylist.setBackgroundColor(it)
+            }
         }
         editText = null
     }
@@ -295,5 +311,7 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
         private const val EDIT_TEXT_TITLE = 1
         private const val EDIT_TEXT_DESCRIPTION = 2
         private const val SCHEME = "package"
+
+        fun newInstance(): AddPlaylistFragment = AddPlaylistFragment()
     }
 }
