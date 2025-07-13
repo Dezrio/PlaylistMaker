@@ -25,6 +25,8 @@
     <color name="navigation_bar">#3772E7</color>
     <color name="divider">#E6E8EB</color>
 
-    <color name="playlistDialogBorderNotEmpty">#3772E7</color>
-    <color name="playlistDialogTextNotEmpty">#3772E7</color>
+    <color name="playlist_dialog_border_not_empty">#3772E7</color>
+    <color name="playlist_dialog_text_not_empty">#3772E7</color>
+    <color name="btn_add_playlist">#3772E7</color>
+    <color name="btn_add_playlist_pressed">#AEAFB4</color>
 </resources>

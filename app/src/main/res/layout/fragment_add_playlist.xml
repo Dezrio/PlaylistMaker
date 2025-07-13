@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/playerHeader"
             style="@style/HeaderFrame"
             android:layout_width="match_parent"
@@ -21,10 +21,21 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/player_arrow_back"
-                style="@style/HeaderImage" />
+                android:id="@+id/playlist_arrow_back"
+                style="@style/HeaderImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        </FrameLayout>
+            <TextView
+                android:id="@+id/playlist_title"
+                style="@style/HeaderText"
+                android:text="@string/btn_add_playlist_title"
+                app:layout_constraintStart_toEndOf="@id/playlist_arrow_back"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_add_cover"
@@ -40,7 +51,7 @@
             android:layout_marginTop="@dimen/dimension_26"
             android:clickable="true"
             android:contentDescription="@string/playlist_cover_description"
-            android:src="@drawable/create_playlist_cover"
+            android:src="@drawable/ic_playlist_cover"
             app:layout_constraintDimensionRatio="h, 1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

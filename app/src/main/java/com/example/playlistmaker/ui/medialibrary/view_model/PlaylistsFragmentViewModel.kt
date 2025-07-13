@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class PlaylistsViewModel(
+class PlaylistsFragmentViewModel(
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
     private val _screenStateFlow =

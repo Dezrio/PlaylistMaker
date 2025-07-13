@@ -1,6 +1,6 @@
 package com.example.playlistmaker.ui.medialibrary.fragment
 
-import AddPlaylistViewModel
+import AddPlaylistFragmentViewModel
 import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
@@ -43,7 +43,7 @@ import java.io.FileOutputStream
 
 class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
 
-    private val viewModel: AddPlaylistViewModel by viewModel()
+    private val viewModel: AddPlaylistFragmentViewModel by viewModel()
 
     private lateinit var backDialog: MaterialAlertDialogBuilder
 
@@ -91,7 +91,7 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallback)
 
-        binding.toolbarCreatePlaylistScreen.setNavigationOnClickListener {
+        binding.playerHeader.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 

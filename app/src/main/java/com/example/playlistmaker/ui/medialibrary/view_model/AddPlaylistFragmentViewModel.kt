@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 
-class AddPlaylistViewModel(private val playlistInteractor: PlaylistInteractor) : ViewModel() {
+class AddPlaylistFragmentViewModel(private val playlistInteractor: PlaylistInteractor)
+    : ViewModel() {
 
     private val _screenStateFlow =
         MutableStateFlow<AddPlaylistScreenState>(AddPlaylistScreenState.NotFound)

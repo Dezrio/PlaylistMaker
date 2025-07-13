@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.medialibrary.fragment
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -16,7 +15,7 @@ import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.domain.medialibrary.models.Playlist
 import com.example.playlistmaker.ui.medialibrary.adapter.PlaylistGridAdapter
 import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsScreenState
-import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsViewModel
+import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsFragmentViewModel
 import com.example.playlistmaker.util.BindingFragment
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,7 +23,7 @@ import java.io.File
 
 class PlaylistsFragment:  BindingFragment<FragmentPlaylistsBinding>() {
 
-    private val viewModel: PlaylistsViewModel by viewModel()
+    private val viewModel: PlaylistsFragmentViewModel by viewModel()
 
     private lateinit var playlistAdapter: PlaylistGridAdapter
 
@@ -38,7 +37,7 @@ class PlaylistsFragment:  BindingFragment<FragmentPlaylistsBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNewPlaylist.setOnClickListener {
-            findNavController().navigate(R.id.action_libraryFragment_to_createPlaylistFragment)
+            findNavController().navigate(R.id.action_mediaLibraryFragment_to_addPlaylistFragment)
         }
 
         playlistAdapter = PlaylistGridAdapter { element, playlist ->
@@ -83,6 +82,8 @@ class PlaylistsFragment:  BindingFragment<FragmentPlaylistsBinding>() {
         playlistAdapter.updatePlaylists(playlists)
         binding.progressBar.isVisible = false
         binding.groupEmpty.isVisible = false
+        binding.tvNotFoundText.isVisible = false
+        binding.ivNotFoundImage.isVisible = false
         binding.rvPlaylists.isVisible = true
     }
 
