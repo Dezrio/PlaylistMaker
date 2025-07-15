@@ -28,5 +28,6 @@
     <color name="playlist_dialog_border_not_empty">#3772E7</color>
     <color name="playlist_dialog_text_not_empty">#3772E7</color>
     <color name="btn_add_playlist">#3772E7</color>
-    <color name="btn_add_playlist_pressed">#AEAFB4</color>
+    <color name="btn_add_playlist_empty">#AEAFB4</color>
+    <color name="playlist_cover">#AEAFB4</color>
 </resources>

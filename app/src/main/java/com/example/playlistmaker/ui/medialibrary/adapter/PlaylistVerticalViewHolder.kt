@@ -24,19 +24,6 @@ class PlaylistVerticalViewHolder(
             .into(binding.ivPlaylistCover)
 
         binding.tvPlaylistTitle.text = playlist.title
-        binding.tvPlaylistTracksCount.text = getTrackPlurals(playlist.tracksCount)
-    }
-
-    private fun getTrackPlurals(trackCount: Int): String {
-        return when {
-            (trackCount % 10 == 1) ->
-                "$trackCount ${itemView.resources.getString(R.string.playlist_one_track)}"
-
-            (trackCount % 10 in 2..4) ->
-                "$trackCount ${itemView.resources.getString(R.string.playlist_few_tracks)}"
-
-            else ->
-                "$trackCount ${itemView.resources.getString(R.string.playlist_other_tracks)}"
-        }
+        binding.tvPlaylistTracksCount.text = itemView.resources.getQuantityString(R.plurals.track_plurals, playlist.tracksCount, playlist.tracksCount)
     }
 }

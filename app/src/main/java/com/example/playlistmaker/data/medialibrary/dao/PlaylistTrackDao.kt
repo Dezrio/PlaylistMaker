@@ -8,7 +8,7 @@ import com.example.playlistmaker.data.medialibrary.entity.PlaylistTrackEntity
 
 @Dao
 interface PlaylistTrackDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(track: PlaylistTrackEntity)
 
     @Query("SELECT * FROM playlist_track_table")

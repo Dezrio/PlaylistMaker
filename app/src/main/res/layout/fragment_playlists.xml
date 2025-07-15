@@ -44,6 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dimension_24"
         android:layout_marginTop="@dimen/dimension_16"
+        android:text="@string/media_library_empty_playlists_text"
+        android:textAlignment="center"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

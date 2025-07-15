@@ -20,6 +20,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -111,31 +112,16 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
             openExternalStorage()
         }
 
-        val titleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                setBorderColor(s, EDIT_TEXT_TITLE)
-
-                setTextColor(s, EDIT_TEXT_TITLE)
-
-                binding.btnCreatePlaylist.isEnabled = !s.isNullOrEmpty()
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
+        binding.etPlaylistTitle.doOnTextChanged { text, start, before, count ->
+            setBorderColor(text, EDIT_TEXT_TITLE)
+            setTextColor(text, EDIT_TEXT_TITLE)
+            binding.btnCreatePlaylist.isEnabled = !text.isNullOrBlank()
         }
-        binding.etPlaylistTitle.addTextChangedListener(titleTextWatcher)
 
-        val descriptionTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                setBorderColor(s, EDIT_TEXT_DESCRIPTION)
-
-                setTextColor(s, EDIT_TEXT_DESCRIPTION)
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
+        binding.etPlaylistDescription.doOnTextChanged { text, start, before, count ->
+            setBorderColor(text, EDIT_TEXT_DESCRIPTION)
+            setTextColor(text, EDIT_TEXT_DESCRIPTION)
         }
-        binding.etPlaylistDescription.addTextChangedListener(descriptionTextWatcher)
 
         binding.btnCreatePlaylist.setOnClickListener {
             viewModel.createPlaylist(
@@ -159,9 +145,8 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
                 is AddPlaylistResultScreenState.Created -> {
                     saveCoverToStorage(state.coverUri, state.filePath)
                     Snackbar.make(
-                        binding.btnCreatePlaylist,
-                        "${requireActivity().getString(R.string.toast_playlist)} " +
-                                "${state.playlistTitle} ${requireActivity().getString(R.string.toast_created)}",
+                        view.rootView,
+                        "${requireActivity().getString(R.string.toast_playlist)} ${state.playlistTitle} ${requireActivity().getString(R.string.toast_created)}",
                         Snackbar.LENGTH_LONG
                     ).show()
 
@@ -171,8 +156,7 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
                 is AddPlaylistResultScreenState.AlreadyExists -> {
                     Snackbar.make(
                         binding.btnCreatePlaylist,
-                        "${requireActivity().getString(R.string.toast_playlist)} " +
-                                "${state.playlistTitle} ${requireActivity().getString(R.string.toast_already_exists)}",
+                        "${requireActivity().getString(R.string.toast_playlist)} ${state.playlistTitle} ${requireActivity().getString(R.string.toast_already_exists)}",
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
@@ -233,32 +217,18 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
             else -> return
         }
 
-        if (!s.isNullOrEmpty()) {
+        if (!s.isNullOrBlank()) {
             ContextCompat.getColorStateList(
                 requireContext(),
                 R.color.border_color_not_empty
             )?.let {
                 editText?.setBoxStrokeColorStateList(it)
             }
-
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.border_color_not_empty
-            ).let {
-                binding.btnCreatePlaylist.setBackgroundColor(it)
-            }
         } else {
             ContextCompat.getColorStateList(
                 requireContext(),
                 R.color.border_color_empty
             )?.let { editText?.setBoxStrokeColorStateList(it) }
-
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.border_color_empty
-            ).let {
-                binding.btnCreatePlaylist.setBackgroundColor(it)
-            }
         }
         editText = null
     }
@@ -270,7 +240,7 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
             else -> return
         }
 
-        if (!s.isNullOrEmpty()) {
+        if (!s.isNullOrBlank()) {
             ContextCompat.getColorStateList(
                 requireContext(),
                 R.color.text_color_not_empty

@@ -13,8 +13,8 @@ interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPlaylist(playlist: PlaylistEntity)
 
-    @Delete(entity = PlaylistEntity::class)
-    suspend fun deletePlaylist(playlist: PlaylistEntity)
+    @Query("DELETE FROM playlists_table WHERE id = :playlistId")
+    suspend fun deletePlaylist(playlistId: Int)
 
     @Query("SELECT * FROM playlists_table")
     suspend fun getAllPlaylists(): List<PlaylistEntity>
