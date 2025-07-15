@@ -72,7 +72,7 @@ class PlaylistRepositoryImpl(
     }
 
     override fun getTracksByIds(tracksIds: List<Int>): Flow<List<Track>> = flow  {
-        playlistTrackDao.getByIds(tracksIds)
+        emit(playlistTrackDao.getByIds(tracksIds).map { playlistTrackConverter.map(it) })
     }
 
     override suspend fun update(playlist: Playlist) {

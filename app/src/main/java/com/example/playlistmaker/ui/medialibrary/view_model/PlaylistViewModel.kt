@@ -41,10 +41,6 @@ class PlaylistViewModel(
     private val deletingPlaylistEventLiveData = SingleEventLiveData<Boolean>()
     fun observeDeletingPlaylistEventLiveData(): LiveData<Boolean> = deletingPlaylistEventLiveData
 
-    init {
-        updatePlaylistDetails()
-    }
-
     fun updatePlaylistDetails() {
         viewModelScope.launch {
             playlistsInteractor.getById(playlistId).collect { resultPlaylist ->
@@ -76,15 +72,21 @@ class PlaylistViewModel(
 
     private fun getTracksDuration(tracks: List<Track>): Int {
         val tracksDuration = tracks.map { timeToMillisWithDateFormat(it.trackTime) }
-        val sumMillis = tracksDuration.sum()
+        val sumMillis = tracksDuration.sumOf { it.first } + tracksDuration.sumOf { it.second } / 60
 
-        return (sumMillis / MILLIS_PER_MINUTE).toInt()
+        return sumMillis
     }
 
-    private fun timeToMillisWithDateFormat(timeString: String): Long {
-        val format = SimpleDateFormat("mm:ss", Locale.getDefault())
-        val date = format.parse(timeString) ?: return 0L
-        return date.time
+    private fun timeToMillisWithDateFormat(timeStrings: String): Pair<Int, Int> {
+        var total: Pair<Int, Int> = 0 to 0
+
+        try {
+            val parts = timeStrings.split(":")
+
+            total = parts[0].toInt() to parts[1].toInt()
+        } catch (_: Exception) { }
+
+        return total
     }
 
     fun onTrackClicked(track: Track) {
@@ -132,7 +134,6 @@ class PlaylistViewModel(
     }
 
     companion object {
-        private const val MILLIS_PER_MINUTE = 60_000
         private const val ON_TRACK_CLICK_DELAY_MILLIS = 1000L
     }
 }

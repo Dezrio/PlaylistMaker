@@ -313,6 +313,40 @@
         <item name="navigationIconTint">?attr/colorOnPrimary</item>
         <item name="titleTextColor">?attr/colorOnPrimary</item>
     </style>
+    <style name="MaterialDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">@color/white</item>
+        <item name="buttonBarPositiveButtonStyle">@style/MaterialAlertDialog.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/MaterialAlertDialog.Button</item>
+        <item name="buttonBarNeutralButtonStyle">@style/MaterialAlertDialog.Button</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.Body.Text</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Title.Text</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.Style</item>
+    </style>
+    <style name="MaterialAlertDialog.Style" parent="MaterialAlertDialog.MaterialComponents">
+        <item name="shapeAppearance">@style/ShapeAppearance.Style</item>
+        <item name="backgroundInsetStart">@dimen/dimension_40</item>
+        <item name="backgroundInsetEnd">@dimen/dimension_40</item>
+    </style>
+    <style name="ShapeAppearance.Style" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerSize">@dimen/dimension_4</item>
+    </style>
+    <style name="MaterialAlertDialog.Button" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/progress_bar</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+    <style name="MaterialAlertDialog.Body.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/color_main</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:minHeight">@dimen/dimension_20</item>
+        <item name="android:lines">2</item>
+    </style>
+    <style name="MaterialAlertDialog.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/color_main</item>
+        <item name="android:textSize">@dimen/dimension_16</item>
+    </style>
     <!--MediaLibrary-->>
 
 </resources>

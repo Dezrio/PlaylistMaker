@@ -34,8 +34,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
-import java.io.File
-import java.io.IOException
 import kotlin.properties.Delegates
 
 class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
@@ -191,15 +189,8 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
     }
 
     private fun setPlaylistDetails(info: PlaylistInfo) {
-        val bitmap: Bitmap? = try {
-            val inputStream = File(info.coverPath).inputStream()
-            BitmapFactory.decodeStream(inputStream)
-        } catch (e: IOException) {
-            null
-        }
-
         Glide.with(requireActivity())
-            .load(bitmap)
+            .load(info.coverPath)
             .placeholder(R.drawable.player_placeholder)
             .apply(RequestOptions().transform(CenterCrop()))
             .into(binding.ivCover)
@@ -224,7 +215,7 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         binding.tvEmptyTrackList.isVisible = info.tracks.isEmpty()
 
         Glide.with(requireActivity())
-            .load(bitmap)
+            .load(info.coverPath)
             .placeholder(R.drawable.player_placeholder)
             .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(2)))
             .into(binding.ivPlaylistCoverMini)
@@ -251,7 +242,7 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
 
     private fun showToast(toastMessage: String) {
         Snackbar.make(
-            binding.ivShare,
+            view!!.rootView,
             toastMessage,
             Snackbar.LENGTH_LONG
         ).show()

@@ -37,15 +37,24 @@ import com.google.android.material.textfield.TextInputLayout
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.io.FileOutputStream
 
 class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
 
-    private val viewModel: AddPlaylistFragmentViewModel by viewModel()
+    private var isEdit: Boolean = false
 
-    private lateinit var backDialog: MaterialAlertDialogBuilder
+    private val playlistId: Int by lazy {
+        requireArguments().getInt(PLAYLIST_ID_KEY)
+    }
+
+    private val viewModel: AddPlaylistFragmentViewModel by lazy {
+        getViewModel { parametersOf(playlistId) }
+    }
+
+    private var backDialog: MaterialAlertDialogBuilder? = null
 
     private val backCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -79,15 +88,18 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        isEdit = playlistId > 0
+
         storagePath = getStoragePath()
 
-        backDialog = MaterialAlertDialogBuilder(requireContext(), R.style.DialogStyle)
-            .setTitle(requireContext().getString(R.string.back_title))
-            .setMessage(requireContext().getString(R.string.back_message))
-            .setNeutralButton(requireContext().getString(R.string.back_cancel)) { dialog, which -> }
-            .setPositiveButton(requireContext().getString(R.string.back_ok)) { dialog, which ->
-                parentFragmentManager.popBackStack()
-            }
+        if (!isEdit)
+            backDialog = MaterialAlertDialogBuilder(requireContext(), R.style.DialogStyle)
+                .setTitle(requireContext().getString(R.string.back_title))
+                .setMessage(requireContext().getString(R.string.back_message))
+                .setNeutralButton(requireContext().getString(R.string.back_cancel)) { dialog, which -> }
+                .setPositiveButton(requireContext().getString(R.string.back_ok)) { dialog, which ->
+                    parentFragmentManager.popBackStack()
+                }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallback)
 
@@ -122,30 +134,68 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
             setTextColor(text, EDIT_TEXT_DESCRIPTION)
         }
 
-        binding.btnCreatePlaylist.setOnClickListener {
-            viewModel.createPlaylist(
-                binding.etPlaylistTitle.text.toString(),
-                binding.etPlaylistDescription.text.toString(),
-                storagePath
-            )
+        if (!isEdit) {
+            binding.btnCreatePlaylist.setOnClickListener {
+                viewModel.createPlaylist(
+                    binding.etPlaylistTitle.text.toString(),
+                    binding.etPlaylistDescription.text.toString(),
+                    storagePath
+                )
+            }
+
+            setCreateState()
+        }
+        else {
+            binding.btnCreatePlaylist.setOnClickListener {
+                viewModel.updatePlaylist(
+                    binding.etPlaylistTitle.text.toString(),
+                    binding.etPlaylistDescription.text.toString(),
+                    storagePath
+                )
+            }
+
+            setEditState()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.screenStateFlow.collect { state ->
                 when (state) {
                     is AddPlaylistScreenState.NotFound -> setNotFoundScreenState()
-                    is AddPlaylistScreenState.Found -> setFoundScreenState(state.url)
+                    is AddPlaylistScreenState.Found -> setCover(state.url)
                 }
             }
         }
 
         viewModel.observeOnCreateClickedLiveData().observe(viewLifecycleOwner) { state ->
             when (state) {
+                is AddPlaylistResultScreenState.Found -> {
+                    binding.etPlaylistTitle.setText(state.playlistTitle)
+                    binding.etPlaylistDescription.setText(state.description)
+
+                    if (state.coverUri.isNotBlank())
+                        setCover(state.coverUri)
+                }
+
                 is AddPlaylistResultScreenState.Created -> {
                     saveCoverToStorage(state.coverUri, state.filePath)
                     Snackbar.make(
                         view.rootView,
                         "${requireActivity().getString(R.string.toast_playlist)} ${state.playlistTitle} ${requireActivity().getString(R.string.toast_created)}",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+
+                    parentFragmentManager.popBackStack()
+                }
+
+                is AddPlaylistResultScreenState.Updated -> {
+                    if (state.needUpdateCover)
+                        overwriteCoverFile(state.coverUri, state.playlistTitle, state.oldTitle)
+                    else
+                        saveCoverToStorage(state.coverUri, state.filePath)
+
+                    Snackbar.make(
+                        view.rootView,
+                        "${requireActivity().getString(R.string.toast_playlist)} ${state.playlistTitle} ${requireActivity().getString(R.string.toast_updated)}",
                         Snackbar.LENGTH_LONG
                     ).show()
 
@@ -160,21 +210,34 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
                     ).show()
                 }
             }
-
         }
 
         viewModel.observeOnBackClickedLiveData().observe(viewLifecycleOwner) { isContentEntered ->
-            if (isContentEntered) backDialog.show() else parentFragmentManager.popBackStack()
+            if (isContentEntered && backDialog != null)
+                backDialog!!.show()
+            else
+                parentFragmentManager.popBackStack()
         }
+    }
+
+    private fun setCreateState() {
+        binding.playlistTitle.setText(R.string.media_library_btn_new_playlist)
+        binding.btnCreatePlaylist.setText(R.string.btn_create_playlist)
+    }
+
+    private fun setEditState() {
+        binding.playlistTitle.setText(R.string.media_library_btn_edit_playlist)
+        binding.btnCreatePlaylist.setText(R.string.btn_save_playlist)
     }
 
     private fun setNotFoundScreenState() {
         binding.frAddPlaylist.isEnabled = false
     }
 
-    private fun setFoundScreenState(uri: String) {
+    private fun setCover(uri: String) {
         Glide.with(requireContext())
             .load(uri)
+            .placeholder(R.drawable.player_placeholder)
             .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(8)))
             .into(binding.ivAddCover)
     }
@@ -274,6 +337,17 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+    }
+
+    private fun overwriteCoverFile(newCoverUri: String, newTitle: String, oldTitle: String) {
+        File(storagePath, oldTitle).delete()
+        val inputStream = requireContext().contentResolver.openInputStream(newCoverUri.toUri())
+        val outputStream = FileOutputStream(File(storagePath, newTitle))
+        BitmapFactory
+            .decodeStream(inputStream)
+            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+        inputStream?.close()
+        outputStream.close()
     }
 
     companion object {

@@ -55,6 +55,7 @@
     <string name="permission_cancel">Отмена</string>
     <string name="toast_playlist">Плейлист</string>
     <string name="toast_created">создан</string>
+    <string name="toast_updated">обновлен</string>
     <string name="toast_already_exists">уже существует</string>
 
     <string name="playlist_title_test">Музыка для хорошего вечера</string>
@@ -96,6 +97,7 @@
     <string name="dialog_btn_no">Нет</string>
     <string name="toast_nothing_tracks_for_sharing_playlist">В этом плейлисте нет списка треков, которым можно поделиться</string>
 
+    <string name="media_library_btn_edit_playlist">Редактировать</string>
     <string name="btn_save_playlist">Сохранить</string>
     <string name="toast_playlist_without_changes">Нет изменений для сохранения</string>
     <string name="empty_playlist_track_list_message">В этом плейлисте нет треков</string>

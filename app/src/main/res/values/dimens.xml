@@ -22,12 +22,14 @@
     <dimen name="dimension_16">16dp</dimen>
     <dimen name="dimension_17">17dp</dimen>
     <dimen name="dimension_19">19dp</dimen>
+    <dimen name="dimension_20">20dp</dimen>
     <dimen name="dimension_24">24dp</dimen>
     <dimen name="dimension_26">26dp</dimen>
     <dimen name="dimension_28">28dp</dimen>
     <dimen name="dimension_29">29dp</dimen>
     <dimen name="dimension_30">30dp</dimen>
     <dimen name="dimension_32">32dp</dimen>
+    <dimen name="dimension_40">40dp</dimen>
     <dimen name="dimension_42">42dp</dimen>
     <dimen name="dimension_44">44dp</dimen>
     <dimen name="dimension_45">45dp</dimen>
