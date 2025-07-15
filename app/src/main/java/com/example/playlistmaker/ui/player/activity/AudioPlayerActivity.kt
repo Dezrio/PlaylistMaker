@@ -140,16 +140,14 @@ class AudioPlayerActivity : AppCompatActivity() {
                 is AddPlaylistResultScreenState.Created -> {
                     Snackbar.make(
                         binding.rvPlaylists,
-                        "${getString(R.string.toast_success_adding_track_to_playlist)} " +
-                                state.playlistTitle,
+                        "${getString(R.string.toast_success_adding_track_to_playlist)} ${state.playlistTitle}",
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
 
                 is AddPlaylistResultScreenState.AlreadyExists -> Snackbar.make(
                     binding.rvPlaylists,
-                    "${getString(R.string.toast_track_already_exists_in_playlist)} " +
-                            state.playlistTitle,
+                    "${getString(R.string.toast_track_already_exists_in_playlist)} ${state.playlistTitle}",
                     Snackbar.LENGTH_LONG
                 ).show()
             }

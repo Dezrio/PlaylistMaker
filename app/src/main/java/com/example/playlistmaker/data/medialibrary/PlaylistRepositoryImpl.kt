@@ -26,7 +26,7 @@ class PlaylistRepositoryImpl(
                 playlistTrackDao.delete(trackId)
         }
 
-        playlistDao.deletePlaylist(playlistConverter.map(playlist))
+        playlistDao.deletePlaylist(playlist.id)
     }
 
     override fun getAll(): Flow<List<Playlist>> = flow {

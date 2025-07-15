@@ -68,18 +68,12 @@
 
     <string name="btn_add_playlist_title">Новый плейлист</string>
 
-    <string name="playlist_zero_tracks">треков</string>
-    <string name="playlist_one_track">трек</string>
-    <string name="playlist_few_tracks">трека</string>
-    <string name="playlist_many_tracks">треков</string>
-    <string name="playlist_other_tracks">треков</string>
-
     <plurals name="track_plurals">
-        <item quantity="zero">%1$d треков</item>
-        <item quantity="one">%1$d трек</item>
-        <item quantity="two">%1$d трека</item>
-        <item quantity="few">%1$d трека</item>
-        <item quantity="many">%1$d треков</item>
-        <item quantity="other">%1$d треков</item>
+        <item quantity="zero">%d треков</item>
+        <item quantity="one">%d трек</item>
+        <item quantity="two">%d трека</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
     </plurals>
 </resources>
