@@ -23,8 +23,10 @@
     <dimen name="dimension_24">24dp</dimen>
     <dimen name="dimension_26">26dp</dimen>
     <dimen name="dimension_28">28dp</dimen>
+    <dimen name="dimension_29">29dp</dimen>
     <dimen name="dimension_30">30dp</dimen>
     <dimen name="dimension_32">32dp</dimen>
+    <dimen name="dimension_42">42dp</dimen>
     <dimen name="dimension_44">44dp</dimen>
     <dimen name="dimension_45">45dp</dimen>
     <dimen name="dimension_50">50dp</dimen>
