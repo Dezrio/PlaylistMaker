@@ -156,7 +156,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.btnCreatePlaylist.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             supportFragmentManager.commit {
-                add(R.id.player_fragment_container, AddPlaylistFragment.newInstance())
+                add(R.id.player_fragment_container, AddPlaylistFragment.newInstance(-1))
                 setReorderingAllowed(true)
                 addToBackStack(null)
             }

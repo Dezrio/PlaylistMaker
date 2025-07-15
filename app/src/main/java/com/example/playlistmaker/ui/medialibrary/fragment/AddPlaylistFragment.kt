@@ -10,8 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +18,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -281,7 +280,12 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
         private const val EDIT_TEXT_TITLE = 1
         private const val EDIT_TEXT_DESCRIPTION = 2
         private const val SCHEME = "package"
+        private const val PLAYLIST_ID_KEY = "PLAYLIST_ID_KEY"
 
-        fun newInstance(): AddPlaylistFragment = AddPlaylistFragment()
+        fun newInstance(playlistId: Int): AddPlaylistFragment = AddPlaylistFragment().apply {
+            arguments = bundleOf(PLAYLIST_ID_KEY to playlistId)
+        }
+
+        fun setArgs(playlistId: Int): Bundle = bundleOf(PLAYLIST_ID_KEY to playlistId)
     }
 }

@@ -1,11 +1,10 @@
 package com.example.playlistmaker.ui.medialibrary.adapter
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.domain.medialibrary.models.Playlist
 
-class PlaylistGridAdapter(private val onLongClickListener: OnLongClickListener) :
+class PlaylistGridAdapter(private val onClickListener: OnClickListener) :
     RecyclerView.Adapter<PlaylistGridViewHolder>() {
     private val playlists: MutableList<Playlist> = mutableListOf()
 
@@ -16,8 +15,8 @@ class PlaylistGridAdapter(private val onLongClickListener: OnLongClickListener) 
     override fun onBindViewHolder(holder: PlaylistGridViewHolder, position: Int) {
         holder.bind(playlists[position])
 
-        holder.itemView.setOnLongClickListener {
-            onLongClickListener.onLongClick(holder.itemView, playlists[position])
+        holder.itemView.setOnClickListener {
+            onClickListener.onClick(playlists[position])
         }
 
     }
@@ -32,7 +31,7 @@ class PlaylistGridAdapter(private val onLongClickListener: OnLongClickListener) 
         this.notifyDataSetChanged()
     }
 
-    fun interface OnLongClickListener {
-        fun onLongClick(view: View, playlist: Playlist): Boolean
+    fun interface OnClickListener {
+        fun onClick(playlist: Playlist)
     }
 }
