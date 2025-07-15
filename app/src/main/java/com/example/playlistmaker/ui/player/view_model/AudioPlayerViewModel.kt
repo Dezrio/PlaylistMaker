@@ -5,9 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.favorites.api.interactor.FavoriteTracksInteractor
+import com.example.playlistmaker.domain.medialibrary.api.interactor.PlaylistInteractor
+import com.example.playlistmaker.domain.medialibrary.models.Playlist
 import com.example.playlistmaker.domain.player.api.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.ui.medialibrary.view_model.AddPlaylistResultScreenState
+import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsScreenState
+import com.example.playlistmaker.util.SingleEventLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,7 +23,8 @@ import kotlinx.coroutines.withContext
 class AudioPlayerViewModel(
     private var track: Track,
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    private val favoriteTracksInteractor: FavoriteTracksInteractor
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
     private var trackCurrentTime: String = DEFAULT_CUR_TIME
 
@@ -26,6 +32,10 @@ class AudioPlayerViewModel(
         track,
         AudioPlayerState.STATE_DEFAULT,
     ))
+
+    private val addTrackLiveData = SingleEventLiveData<AddPlaylistResultScreenState>()
+
+    private val playlistsLiveData = MutableLiveData<PlaylistsScreenState>()
 
     init {
         track.previewUrl?.let { url ->
@@ -36,6 +46,8 @@ class AudioPlayerViewModel(
     }
 
     fun getAudioPlayerLiveData(): LiveData<AudioPlayerData> = audioPlayerLiveData
+    fun getAddTrackLiveData(): LiveData<AddPlaylistResultScreenState> = addTrackLiveData
+    fun getPlaylistsLiveData(): LiveData<PlaylistsScreenState> = playlistsLiveData
 
     fun playerControl() {
         audioPlayerInteractor.controlPlayer(
@@ -144,6 +156,30 @@ class AudioPlayerViewModel(
                     audioPlayerLiveData.value?.copy(
                         track = track
                 ))
+            }
+        }
+    }
+
+    fun btnAddTrackToPlaylistClicked() {
+        playlistsLiveData.postValue(PlaylistsScreenState.Loading)
+
+        viewModelScope.launch {
+            playlistInteractor.getAll().collect { playlists ->
+                if (playlists.isEmpty())
+                    playlistsLiveData.postValue(PlaylistsScreenState.NotFound)
+                else
+                    playlistsLiveData.postValue(PlaylistsScreenState.Found(playlists))
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist) {
+        if (playlist.tracksIds.contains(track.trackId))
+            addTrackLiveData.postValue(AddPlaylistResultScreenState.AlreadyExists(playlist.title))
+        else {
+            viewModelScope.launch {
+                playlistInteractor.addNewTrack(playlist, track)
+                addTrackLiveData.postValue(AddPlaylistResultScreenState.Created(playlist.title, playlist.coverPath, null))
             }
         }
     }

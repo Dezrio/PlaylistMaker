@@ -1,6 +1,6 @@
 package com.example.playlistmaker.data.favorites
 
-import com.example.playlistmaker.data.favorites.converters.TrackDbConvertor
+import com.example.playlistmaker.data.favorites.converters.TrackDbConverter
 import com.example.playlistmaker.data.favorites.dao.TrackDao
 import com.example.playlistmaker.data.favorites.entity.TrackEntity
 import com.example.playlistmaker.domain.favorites.api.repository.FavoriteTracksRepository
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 
 class FavoriteTracksRepositoryImpl(
     private val dao: TrackDao,
-    private val trackConvertor: TrackDbConvertor
+    private val trackConvertor: TrackDbConverter
 ) : FavoriteTracksRepository {
     override suspend fun saveTrack(track: Track) {
         dao.insert(trackConvertor.map(track))

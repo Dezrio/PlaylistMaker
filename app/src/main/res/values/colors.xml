@@ -9,6 +9,7 @@
     <color name="background_main">#3772E7</color>
     <color name="background_settings">#FFFFFF</color>
     <color name="background_search_edit_text">#E6E8EB</color>
+    <color name="text_icon_color">#AEAFB4</color>
 
     <color name="icon_settings">#AEAFB4</color>
     <color name="hint_settings">#AEAFB4</color>
@@ -23,4 +24,10 @@
     <color name="progress_bar">#3772E7</color>
     <color name="navigation_bar">#3772E7</color>
     <color name="divider">#E6E8EB</color>
+
+    <color name="playlist_dialog_border_not_empty">#3772E7</color>
+    <color name="playlist_dialog_text_not_empty">#3772E7</color>
+    <color name="btn_add_playlist">#3772E7</color>
+    <color name="btn_add_playlist_empty">#AEAFB4</color>
+    <color name="playlist_cover">#AEAFB4</color>
 </resources>
