@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -21,6 +22,8 @@ class PlaylistVerticalViewHolder(
             .load(playlist.coverPath)
             .placeholder(R.drawable.player_placeholder)
             .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(2)))
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.ivPlaylistCover)
 
         binding.tvPlaylistTitle.text = playlist.title

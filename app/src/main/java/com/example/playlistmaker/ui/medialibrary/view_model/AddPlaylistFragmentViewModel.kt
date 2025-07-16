@@ -117,10 +117,10 @@ class AddPlaylistFragmentViewModel(
             if (!coverUri.equals(playlist.coverPath) && playlist.coverPath.isNotEmpty()){
                 oldTitle = playlist.title
                 needUpdateCover = true
-
-                if (coverUri.isNotBlank())
-                    filePath = File(storagePath, playlistTitle)
             }
+
+            if (coverUri.isNotBlank())
+                filePath = File(storagePath, playlistTitle)
 
             playlistInteractor.update(
                 Playlist(

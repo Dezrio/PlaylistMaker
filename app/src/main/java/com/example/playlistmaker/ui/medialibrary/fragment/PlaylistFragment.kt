@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -193,6 +194,8 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
             .load(info.coverPath)
             .placeholder(R.drawable.player_placeholder)
             .apply(RequestOptions().transform(CenterCrop()))
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.ivCover)
 
         binding.tvPlaylistTitle.text = info.title
@@ -218,13 +221,13 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
             .load(info.coverPath)
             .placeholder(R.drawable.player_placeholder)
             .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(2)))
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.ivPlaylistCoverMini)
         binding.tvPlaylistTitleMini.text = info.title
         binding.tvPlaylistTracksCountMini.text = trackCountString
 
-        deletePlaylistDialog.setMessage(
-            "${requireActivity().getString(R.string.dialog_delete_playlist)} ${info.title} ${requireActivity().getString(R.string.question)}"
-        )
+        deletePlaylistDialog.setMessage(getString(R.string.dialog_delete_message, info.title))
     }
 
     private fun openPlayer(track: Track) {

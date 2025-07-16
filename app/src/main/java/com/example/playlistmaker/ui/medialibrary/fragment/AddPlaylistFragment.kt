@@ -22,6 +22,7 @@ import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -46,7 +47,7 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
 
     private var isEdit: Boolean = false
 
-    private val playlistId: Int by lazy {
+    private val playlistId: Int by lazy(LazyThreadSafetyMode.NONE) {
         requireArguments().getInt(PLAYLIST_ID_KEY)
     }
 
@@ -213,8 +214,8 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
         }
 
         viewModel.observeOnBackClickedLiveData().observe(viewLifecycleOwner) { isContentEntered ->
-            if (isContentEntered && backDialog != null)
-                backDialog!!.show()
+            if (isContentEntered)
+                backDialog?.let { it.show() }
             else
                 parentFragmentManager.popBackStack()
         }
@@ -239,6 +240,8 @@ class AddPlaylistFragment : BindingFragment<FragmentAddPlaylistBinding>() {
             .load(uri)
             .placeholder(R.drawable.player_placeholder)
             .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(8)))
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.ivAddCover)
     }
 
