@@ -91,18 +91,19 @@
             app:layout_constraintStart_toStartOf="@id/leftBorder"
             app:layout_constraintTop_toTopOf="@id/ibtnPlay" />
 
-        <ImageButton
+        <com.example.playlistmaker.utils.PlaybackButtonView
             android:id="@+id/ibtnPlay"
             android:layout_width="@dimen/btn_play_player_size"
             android:layout_height="@dimen/btn_play_player_size"
             android:background="@null"
             android:clickable="true"
-            android:src="@drawable/ic_play"
             app:layout_constraintBottom_toTopOf="@id/tvTrackCurrentTime"
             app:layout_constraintEnd_toStartOf="@id/ibtnLike"
             app:layout_constraintStart_toEndOf="@id/ibtnAddTrackToPlaylist"
             app:layout_constraintVertical_chainStyle="packed"
-            app:tint="?attr/colorOnPrimary" />
+            app:pauseImgResId="@drawable/ic_pause"
+            app:playImgResId="@drawable/ic_play"
+            app:tintColorId="?attr/colorOnPrimary" />
 
         <ImageButton
             android:id="@+id/ibtnLike"

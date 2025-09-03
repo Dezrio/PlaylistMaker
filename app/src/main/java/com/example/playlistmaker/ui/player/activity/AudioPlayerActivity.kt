@@ -199,19 +199,19 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.ibtnLike.isSelected = track.isFavorite
         binding.ibtnPlay.isEnabled = true
         binding.tvTrackCurrentTime.text  = trackCurTime
-        binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+        binding.ibtnPlay.setPlayingState(false)
     }
 
     private fun showPlayingState(track: Track, trackCurTime: String){
         binding.ibtnLike.isSelected = track.isFavorite
         binding.tvTrackCurrentTime.text  = trackCurTime
-        binding.ibtnPlay.setImageResource(R.drawable.ic_pause)
+        binding.ibtnPlay.setPlayingState(true)
     }
 
     private fun showPauseState(track: Track, trackCurTime: String){
         binding.ibtnLike.isSelected = track.isFavorite
         binding.tvTrackCurrentTime.text  = trackCurTime
-        binding.ibtnPlay.setImageResource(R.drawable.ic_play)
+        binding.ibtnPlay.setPlayingState(false)
     }
 
     private fun trackInit(track: Track?) {
