@@ -41,9 +41,9 @@ class FavouriteTracksFragmentViewModel(
 
     private fun processResult(tracks: List<Track>) {
         if (tracks.isEmpty())
-            renderState(FavouriteTracksScreenState.NotFound)
+            screenStateLiveData.postValue(FavouriteTracksScreenState.NotFound)
         else
-            renderState(FavouriteTracksScreenState.Found(tracks))
+            screenStateLiveData.postValue(FavouriteTracksScreenState.Found(tracks))
     }
 
     fun onTrackClick(track: Track) {

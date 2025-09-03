@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fr_playlists"
     style="@style/SecondLayout"
     android:layout_width="match_parent"
@@ -43,10 +44,41 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dimension_24"
         android:layout_marginTop="@dimen/dimension_16"
+        android:text="@string/media_library_empty_playlists_text"
+        android:textAlignment="center"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTag="tv_error_message"
         app:layout_constraintTop_toBottomOf="@id/iv_not_found_image" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/dimension_12"
+        android:layout_marginTop="@dimen/dimension_8"
+        android:layout_marginBottom="@dimen/nav_bar_playlist_size"
+        android:visibility="visible"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_new_playlist"
+        app:layout_constraintVertical_bias="0.0"
+        app:spanCount="2"
+        tools:listitem="@layout/playlist_grid_item" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/dimension_44"
+        android:layout_height="@dimen/dimension_44"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dimension_140"
+        android:indeterminateTint="@color/progress_bar"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

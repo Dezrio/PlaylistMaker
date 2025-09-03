@@ -3,8 +3,10 @@ package com.example.playlistmaker.di
 import android.app.Application.MODE_PRIVATE
 import android.media.MediaPlayer
 import androidx.room.Room
-import com.example.playlistmaker.data.favorites.AppDatabase
+import com.example.playlistmaker.data.AppDatabase
 import com.example.playlistmaker.data.favorites.dao.TrackDao
+import com.example.playlistmaker.data.medialibrary.dao.PlaylistDao
+import com.example.playlistmaker.data.medialibrary.dao.PlaylistTrackDao
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.search.network.TracksAPIService
@@ -54,6 +56,14 @@ val DataModule = module {
 
     single<TrackDao> {
         get<AppDatabase>().trackDao()
+    }
+
+    single<PlaylistDao> {
+        get<AppDatabase>().playlistDao()
+    }
+
+    single<PlaylistTrackDao> {
+        get<AppDatabase>().playlistTrackDao()
     }
 
     single<NetworkClient> {

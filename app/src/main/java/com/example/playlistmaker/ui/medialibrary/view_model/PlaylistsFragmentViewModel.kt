@@ -1,12 +1,47 @@
 package com.example.playlistmaker.ui.medialibrary.view_model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.medialibrary.api.interactor.PlaylistInteractor
+import com.example.playlistmaker.domain.medialibrary.models.Playlist
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class PlaylistsFragmentViewModel() : ViewModel() {
-    private val screenStateLiveData: MutableLiveData<PlaylistsScreenState> =
-        MutableLiveData(PlaylistsScreenState.NotFound)
+class PlaylistsFragmentViewModel(
+    private val playlistInteractor: PlaylistInteractor
+) : ViewModel() {
+    private val _screenStateFlow =
+        MutableStateFlow<PlaylistsScreenState>(PlaylistsScreenState.Loading)
 
-    fun screenStateObserve(): LiveData<PlaylistsScreenState> = screenStateLiveData
+    val screenStateFlow = _screenStateFlow.asStateFlow()
+
+    fun updatePlaylists() {
+        renderState(PlaylistsScreenState.Loading)
+
+        viewModelScope.launch {
+            playlistInteractor.getAll()
+                .collect { playlists ->
+                    if (playlists.isEmpty()) {
+                        renderState(PlaylistsScreenState.NotFound)
+                    } else {
+                        renderState(PlaylistsScreenState.Found(playlists))
+                    }
+                }
+        }
+    }
+
+    private fun renderState(state: PlaylistsScreenState) {
+        _screenStateFlow.update {
+            state
+        }
+    }
+
+    fun deletePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.delete(playlist)
+            updatePlaylists()
+        }
+    }
 }

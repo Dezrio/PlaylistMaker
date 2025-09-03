@@ -13,12 +13,39 @@
     <dimen name="btn_text_size">22sp</dimen>
     <dimen name="btn_text_size_min">16sp</dimen>
 
+    <dimen name="dimension_1">1dp</dimen>
+    <dimen name="dimension_4">4dp</dimen>
+    <dimen name="dimension_8">8dp</dimen>
+    <dimen name="dimension_11">11dp</dimen>
+    <dimen name="dimension_12">12dp</dimen>
+    <dimen name="dimension_13">13dp</dimen>
     <dimen name="dimension_16">16dp</dimen>
     <dimen name="dimension_17">17dp</dimen>
+    <dimen name="dimension_19">19dp</dimen>
+    <dimen name="dimension_20">20dp</dimen>
     <dimen name="dimension_24">24dp</dimen>
+    <dimen name="dimension_26">26dp</dimen>
+    <dimen name="dimension_28">28dp</dimen>
+    <dimen name="dimension_29">29dp</dimen>
+    <dimen name="dimension_30">30dp</dimen>
+    <dimen name="dimension_32">32dp</dimen>
+    <dimen name="dimension_40">40dp</dimen>
+    <dimen name="dimension_42">42dp</dimen>
     <dimen name="dimension_44">44dp</dimen>
+    <dimen name="dimension_45">45dp</dimen>
+    <dimen name="dimension_50">50dp</dimen>
+    <dimen name="dimension_54">54dp</dimen>
+    <dimen name="dimension_56">56dp</dimen>
+    <dimen name="dimension_60">60dp</dimen>
     <dimen name="dimension_140">140dp</dimen>
 
     <dimen name="btn_player_size">51dp</dimen>
     <dimen name="btn_play_player_size">100dp</dimen>
+
+    <dimen name="nav_bar_playlist_size">56dp</dimen>
+
+    <dimen name="ic_playlist_cover_size">312dp</dimen>
+    <dimen name="ic_add_playlist_cover_size">100dp</dimen>
+
+    <dimen name="sheet_tracks_size">174dp</dimen>
 </resources>
