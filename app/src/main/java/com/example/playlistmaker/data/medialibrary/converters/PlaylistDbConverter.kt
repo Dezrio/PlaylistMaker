@@ -42,15 +42,13 @@ class PlaylistDbConverter(private val gson: Gson) {
         return gson.fromJson(str, type)
     }
 
-    companion object {
-        fun empty(): Playlist {
-            return Playlist(
-                title = "",
-                description = "",
-                coverPath = "",
-                tracksIds = listOf(),
-                tracksCount = 0
-            )
-        }
+    fun getEmpty(): Playlist {
+        return Playlist(
+            title = "",
+            description = "",
+            coverPath = "",
+            tracksIds = listOf(),
+            tracksCount = 0
+        )
     }
 }

@@ -37,12 +37,17 @@ class PlaylistsFragment:  BindingFragment<FragmentPlaylistsBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNewPlaylist.setOnClickListener {
-            findNavController().navigate(R.id.action_mediaLibraryFragment_to_addPlaylistFragment)
+            findNavController().navigate(R.id.action_mediaLibraryFragment_to_addPlaylistFragment,
+            AddPlaylistFragment.setArgs(-1))
         }
 
-        playlistAdapter = PlaylistGridAdapter { element, playlist ->
-            onPlaylistLongClick(element, playlist)
-        }
+        playlistAdapter = PlaylistGridAdapter(
+            onClickListener = { playlist ->
+                val action =
+                    MediaLibraryFragmentDirections.actionMediaLibraryFragmentToPlaylistFragment(playlist.id)
+                findNavController().navigate(action)
+            })
+
         binding.rvPlaylists.layoutManager =
             GridLayoutManager(requireContext(), COUNT_COLUMNS, GridLayoutManager.VERTICAL, false)
         binding.rvPlaylists.adapter = playlistAdapter
@@ -85,27 +90,6 @@ class PlaylistsFragment:  BindingFragment<FragmentPlaylistsBinding>() {
         binding.tvNotFoundText.isVisible = false
         binding.ivNotFoundImage.isVisible = false
         binding.rvPlaylists.isVisible = true
-    }
-
-    private fun onPlaylistLongClick(view: View, playlist: Playlist): Boolean {
-        val popup = PopupMenu(requireContext(), view)
-
-        popup.inflate(R.menu.playlist_menu)
-
-        popup.setOnMenuItemClickListener { item ->
-            when (item?.itemId) {
-                R.id.menu_item_delete -> {
-                    File(
-                        requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                        playlist.title
-                    ).delete()
-                    viewModel.deletePlaylist(playlist)
-                }
-            }
-            false
-        }
-        popup.show()
-        return true
     }
 
     override fun onStart() {

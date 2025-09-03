@@ -47,23 +47,36 @@ class PlaylistRepositoryImpl(
         playlistTrackDao.insert(playlistTrackConverter.map(track))
     }
 
-    override suspend fun deleteTrack(playlist: Playlist, track: Track) {
+    override suspend fun deleteTrack(playlist: Playlist, trackId: Int) {
         val newTrackList: MutableList<Int> = mutableListOf()
         newTrackList.addAll(playlist.tracksIds)
-        newTrackList.remove(track.trackId)
+        newTrackList.remove(trackId)
 
         val updatedPlaylist =
             playlist.copy(tracksIds = newTrackList, tracksCount = newTrackList.size)
 
         playlistDao.updatePlaylist(playlistConverter.map(updatedPlaylist))
 
-        if (checkOnlyOnePlaylistHasTrack(playlist.id, track.trackId))
-            playlistTrackDao.delete(track.trackId)
+        if (checkOnlyOnePlaylistHasTrack(playlist.id, trackId))
+            playlistTrackDao.delete(trackId)
     }
 
     override fun checkPlaylistExistence(playlistTitle: String): Flow<Boolean> = flow {
         val playlistsTitles = playlistDao.getAllPlaylistsTitles()
         emit(playlistsTitles.contains(playlistTitle))
+    }
+
+    override fun getById(playlistId: Int): Flow<Playlist> = flow {
+        val playlist = playlistDao.getPlaylistById(playlistId)
+        emit(playlist?.let { playlistConverter.map(it) } ?: playlistConverter.getEmpty())
+    }
+
+    override fun getTracksByIds(tracksIds: List<Int>): Flow<List<Track>> = flow  {
+        emit(playlistTrackDao.getByIds(tracksIds).map { playlistTrackConverter.map(it) })
+    }
+
+    override suspend fun update(playlist: Playlist) {
+        playlistDao.updatePlaylist(playlistConverter.map(playlist))
     }
 
     private suspend fun checkOnlyOnePlaylistHasTrack(playlistId: Int, trackId: Int): Boolean {
