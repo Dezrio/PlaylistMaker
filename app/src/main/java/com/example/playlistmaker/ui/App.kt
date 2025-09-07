@@ -27,8 +27,11 @@ class App : Application() {
     }
 
     companion object {
-        const val EXTERNAL_STORAGE_NAME = "playlist_maker"
+        const val EXTERNAL_STORAGE_NAME :String = "playlist_maker"
         const val DI_SHARED_PREFS_SETTINGS :String = "DI_SHARED_PREFS_SETTINGS "
         const val DI_SHARED_PREFS_HISTORY :String = "DI_SHARED_PREFS_HISTORY "
+        const val AUDIO_PLAYER_INTENT_TRACK_URL :String = "AUDIO_PLAYER_INTENT_TRACK_URL"
+        const val AUDIO_PLAYER_INTENT_TRACK_ARTIST_NAME :String = "AUDIO_PLAYER_INTENT_TRACK_ARTIST_NAME"
+        const val AUDIO_PLAYER_INTENT_TRACK_TITLE :String = "AUDIO_PLAYER_INTENT_TRACK_TITLE"
     }
 }

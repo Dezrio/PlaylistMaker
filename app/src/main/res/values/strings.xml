@@ -51,6 +51,7 @@
     <string name="back_cancel">Отмена</string>
     <string name="permission_title">Перейти в настройки приложения?</string>
     <string name="permission_message">Для загрузки фото необходимо предоставить разрешение</string>
+    <string name="permission_notifications_message">Для проигрывания трека необходимо разрешение на показ уведомлений</string>
     <string name="permission_ok">Перейти</string>
     <string name="permission_cancel">Отмена</string>
     <string name="toast_playlist">Плейлист</string>
@@ -102,4 +103,6 @@
     <string name="btn_save_playlist">Сохранить</string>
     <string name="toast_playlist_without_changes">Нет изменений для сохранения</string>
     <string name="empty_playlist_track_list_message">В этом плейлисте нет треков</string>
+
+    <string name="audio_player_notification_channel_description">Audio player notification channel</string>
 </resources>

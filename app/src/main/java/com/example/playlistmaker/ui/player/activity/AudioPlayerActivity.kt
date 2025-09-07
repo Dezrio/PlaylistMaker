@@ -1,6 +1,15 @@
 package com.example.playlistmaker.ui.player.activity
 
+import android.Manifest
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
+import android.provider.Settings
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -17,13 +27,21 @@ import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.domain.medialibrary.models.Playlist
 import com.example.playlistmaker.domain.player.models.AudioPlayerState
 import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.services.player.AudioPlayerService
+import com.example.playlistmaker.ui.App.Companion.AUDIO_PLAYER_INTENT_TRACK_ARTIST_NAME
+import com.example.playlistmaker.ui.App.Companion.AUDIO_PLAYER_INTENT_TRACK_TITLE
+import com.example.playlistmaker.ui.App.Companion.AUDIO_PLAYER_INTENT_TRACK_URL
 import com.example.playlistmaker.ui.medialibrary.adapter.PlaylistVerticalAdapter
 import com.example.playlistmaker.ui.medialibrary.fragment.AddPlaylistFragment
 import com.example.playlistmaker.ui.medialibrary.view_model.AddPlaylistResultScreenState
 import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsScreenState
 import com.example.playlistmaker.ui.player.view_model.AudioPlayerViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.markodevcic.peko.PermissionRequester
+import com.markodevcic.peko.PermissionResult
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -37,6 +55,24 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityAudioPlayerBinding
+
+    private var isPlayerServiceConnected: Boolean = false
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as AudioPlayerService.AudioPlayerServiceBinder
+            isPlayerServiceConnected = true
+            viewModel.setAudioPlayerControl(binder.getService())
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isPlayerServiceConnected = false
+            viewModel.removeAudioPlayerControl()
+        }
+    }
+
+    private val requester = PermissionRequester.instance()
+    private lateinit var permissionDialog: MaterialAlertDialogBuilder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -161,6 +197,16 @@ class AudioPlayerActivity : AppCompatActivity() {
                 addToBackStack(null)
             }
         }
+
+        permissionDialog = MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.permission_title))
+            .setMessage(getString(R.string.permission_notifications_message))
+            .setNeutralButton(getString(R.string.permission_cancel)) { dialog, which -> }
+            .setPositiveButton(getString(R.string.permission_ok)) { dialog, which ->
+                openAppSettings()
+            }
+
+        requestNotificationPermissionAndBindService()
     }
 
     override fun onPause() {
@@ -238,5 +284,46 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.tvAlbum.isVisible = false
             binding.tvAlbumText.isVisible = false
         }
+    }
+
+    private fun openAppSettings() {
+        val intent =
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.data =
+            Uri.fromParts(INTENT_SETTINGS_SCHEME, packageName, null)
+        startActivity(intent)
+    }
+
+    private fun requestNotificationPermissionAndBindService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            lifecycleScope.launch {
+                requester.request(Manifest.permission.POST_NOTIFICATIONS)
+                    .collect { result ->
+                        when (result) {
+                            is PermissionResult.Granted -> {
+                                bindPlayerService()
+                            }
+                            is PermissionResult.Denied.DeniedPermanently -> {
+                                permissionDialog.show()
+                            }
+                            is PermissionResult.Denied, PermissionResult.Cancelled -> {}
+                        }
+                    }
+            }
+        } else bindPlayerService()
+    }
+
+    private fun bindPlayerService() {
+        val intent = Intent(this, AudioPlayerService::class.java).apply {
+            putExtra(AUDIO_PLAYER_INTENT_TRACK_URL, track.previewUrl)
+            putExtra(AUDIO_PLAYER_INTENT_TRACK_ARTIST_NAME, track.artistName)
+            putExtra(AUDIO_PLAYER_INTENT_TRACK_TITLE, track.trackName)
+        }
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private companion object {
+        const val INTENT_SETTINGS_SCHEME = "package"
     }
 }
