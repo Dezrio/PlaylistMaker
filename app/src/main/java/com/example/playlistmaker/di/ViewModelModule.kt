@@ -15,7 +15,7 @@ import org.koin.dsl.module
 
 val ViewModelModule = module {
     viewModel { (track: Track) ->
-        AudioPlayerViewModel(track, get(), get(), get())
+        AudioPlayerViewModel(track, get(), get())
     }
 
     viewModel {
