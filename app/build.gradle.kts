@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.androidx.navigation.safeargs)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -58,6 +59,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.compose.material.core)
+    implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,4 +80,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.peko)
+
+    implementation(libs.coil.compose)
+    implementation(libs.kotlinx.collections.immutable)
 }
