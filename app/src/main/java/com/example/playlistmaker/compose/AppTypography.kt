@@ -5,6 +5,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
@@ -30,7 +31,7 @@ fun appTypography(colorScheme: ColorScheme): Typography = Typography(
     ),
     headlineLarge = TextStyle(
         fontFamily = AppFont.YsDisplay,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Medium,
         fontSize = 22.sp,
         color = colorScheme.onPrimary
     ),

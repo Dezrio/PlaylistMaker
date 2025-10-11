@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.compose.material.core)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -83,4 +84,5 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.koin.androidx.compose)
 }

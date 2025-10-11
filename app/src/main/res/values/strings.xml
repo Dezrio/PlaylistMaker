@@ -1,7 +1,7 @@
 <resources>
     <string name="empty_string" />
 
-    <string name="app_name">Playlist Maker</string>
+    <string name="app_name">Playlist Maker Compose</string>
     <string name="btn_search">Поиск</string>
     <string name="btn_library">Медиатека</string>
     <string name="btn_settings">Настройки</string>
