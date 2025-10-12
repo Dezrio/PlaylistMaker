@@ -20,7 +20,8 @@ fun ComposeToolbar(title: String) {
         title = {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(start = 8.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(

@@ -32,9 +32,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MediaLibraryComposeScreen(
-    openAudioPlayerScreen: (Track) -> Unit,
-    navigateToModifyPlaylistScreen: () -> Unit,
-    navigateToOnePlaylistScreen: (Int) -> Unit
+    openAudioPlayer: (Track) -> Unit,
+    openAddPlaylist: () -> Unit,
+    openPlaylist: (Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { LibraryTabs.entries.size })
@@ -96,11 +96,11 @@ fun MediaLibraryComposeScreen(
                 ) { page ->
                     when (LibraryTabs.entries[page]) {
                         LibraryTabs.Favorites -> FavouriteTracksComposeScreen(
-                            openAudioPlayerScreen = openAudioPlayerScreen
+                            openAudioPlayer = openAudioPlayer
                         )
                         LibraryTabs.Playlists -> PlaylistsComposeScreen(
-                            navigateToModifyPlaylistScreen = navigateToModifyPlaylistScreen,
-                            navigateToOnePlaylistScreen = navigateToOnePlaylistScreen
+                            openAddPlaylist = openAddPlaylist,
+                            openPlaylist = openPlaylist
                         )
                     }
                 }

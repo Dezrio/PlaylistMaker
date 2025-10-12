@@ -2,13 +2,26 @@ package com.example.playlistmaker.ui.medialibrary.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,7 +35,6 @@ import coil.compose.AsyncImage
 import com.example.playlistmaker.R
 import com.example.playlistmaker.compose.components.ComposeErrorMessage
 import com.example.playlistmaker.compose.components.ComposeProgressBar
-import com.example.playlistmaker.compose.components.ComposeToolbar
 import com.example.playlistmaker.domain.medialibrary.models.Playlist
 import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsFragmentViewModel
 import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsScreenState
@@ -33,8 +45,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun PlaylistsComposeScreen(
     viewModel: PlaylistsFragmentViewModel = koinViewModel(),
-    navigateToModifyPlaylistScreen: () -> Unit,
-    navigateToOnePlaylistScreen: (Int) -> Unit
+    openAddPlaylist: () -> Unit,
+    openPlaylist: (Int) -> Unit
 ) {
     val screenState by viewModel.screenStateFlow.collectAsStateWithLifecycle()
 
@@ -58,17 +70,17 @@ fun PlaylistsComposeScreen(
                 }
 
                 is PlaylistsScreenState.Found -> {
-                    ComposePlaylistsContent(onClick = navigateToModifyPlaylistScreen)
+                    ComposePlaylistsContent(onClick = openAddPlaylist)
                     ComposePlaylistsGrid(
                         playlists = (screenState as PlaylistsScreenState.Found)
                             .playlists
                             .toImmutableList(),
-                        onPlaylistClick = navigateToOnePlaylistScreen
+                        onPlaylistClick = openPlaylist
                     )
                 }
 
                 is PlaylistsScreenState.NotFound -> {
-                    ComposePlaylistsContent(onClick = navigateToModifyPlaylistScreen)
+                    ComposePlaylistsContent(onClick = openAddPlaylist)
                     ComposeErrorMessage(
                         stringResource(R.string.empty_playlist_track_list_message),
                         R.drawable.not_found_light,

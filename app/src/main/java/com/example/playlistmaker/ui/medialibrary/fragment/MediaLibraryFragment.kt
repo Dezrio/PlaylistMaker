@@ -1,6 +1,7 @@
 package com.example.playlistmaker.ui.medialibrary.fragment
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
@@ -12,8 +13,8 @@ import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.medialibrary.compose.MediaLibraryComposeScreen
 
 class MediaLibraryFragment : Fragment() {
-
     override fun onCreateView(
+        inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
@@ -26,8 +27,8 @@ class MediaLibraryFragment : Fragment() {
                     activity?.let {
                         MediaLibraryComposeScreen(
                             openAudioPlayer = ::openAudioPlayer,
-                            navigateToModifyPlaylistScreen = ::navigateToModifyPlaylistScreen,
-                            navigateToOnePlaylistScreen = ::navigateToOnePlaylistScreen,
+                            openAddPlaylist = ::openAddPlaylist,
+                            openPlaylist = ::openPlaylist,
                         )
                     }
                 }
@@ -36,21 +37,18 @@ class MediaLibraryFragment : Fragment() {
         return composeView
     }
 
-    fun openAudioPlayer(track: Track) {
-        val action = LibraryFragmentDirections.actionLibraryFragmentToAudioPlayerActivity(track)
+    private fun openAudioPlayer(track: Track) {
+        val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToAudioPlayerActivity(track)
         parentFragment?.findNavController()?.navigate(action)
     }
 
-    fun navigateToModifyPlaylistScreen() {
-        parentFragment?.findNavController()?.navigate(
-            R.id.action_libraryFragment_to_modifyPlaylistFragment,
-            ModifyPlaylistFragment.createArgs(UNKNOWN_ID)
-        )
+    private fun openAddPlaylist() {
+        val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToAddPlaylistFragment()
+        parentFragment?.findNavController()?.navigate(action)
     }
 
-    fun navigateToOnePlaylistScreen(playlistId: Int) {
-        val action =
-            LibraryFragmentDirections.actionLibraryFragmentToOnePlaylistFragment(playlistId)
+    private fun openPlaylist(playlistId: Int) {
+        val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToPlaylistFragment(playlistId)
         parentFragment?.findNavController()?.navigate(action)
     }
 }
