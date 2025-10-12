@@ -8,20 +8,23 @@ import com.example.playlistmaker.domain.favorites.api.interactor.FavoriteTracksI
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.util.SingleEventLiveData
 import com.example.playlistmaker.util.debounce
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FavouriteTracksFragmentViewModel(
     private val favoritesInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
-    private val screenStateLiveData = MutableLiveData<FavouriteTracksScreenState>()
-    fun observeScreenState(): LiveData<FavouriteTracksScreenState> = screenStateLiveData
+    private val _screenStateFlow = MutableStateFlow<FavouriteTracksScreenState>(FavouriteTracksScreenState.Loading)
+    val screenStateFlow = _screenStateFlow.asStateFlow()
 
-    private val onTrackClickLiveData = SingleEventLiveData<Track>()
-    fun observeOnTrackClickLiveData(): LiveData<Track> = onTrackClickLiveData
+    private val _onTrackClickStateFlow = MutableStateFlow<Track?>(null)
+    val onTrackClickStateFlow = _onTrackClickStateFlow.asStateFlow()
 
     private val onTrackClickDebounce: (Track) -> Unit =
         debounce(CLICK_DEBOUNCE_DELAY, viewModelScope, false) { track ->
-            onTrackClickLiveData.value = track
+            _onTrackClickStateFlow.update { track }
         }
 
     fun loadTracks() {
@@ -36,14 +39,14 @@ class FavouriteTracksFragmentViewModel(
     }
 
     private fun renderState(state: FavouriteTracksScreenState) {
-        screenStateLiveData.postValue(state)
+        _screenStateFlow.update { state }
     }
 
     private fun processResult(tracks: List<Track>) {
         if (tracks.isEmpty())
-            screenStateLiveData.postValue(FavouriteTracksScreenState.NotFound)
+            _screenStateFlow.update { FavouriteTracksScreenState.NotFound }
         else
-            screenStateLiveData.postValue(FavouriteTracksScreenState.Found(tracks))
+            _screenStateFlow.update { FavouriteTracksScreenState.Found(tracks) }
     }
 
     fun onTrackClick(track: Track) {

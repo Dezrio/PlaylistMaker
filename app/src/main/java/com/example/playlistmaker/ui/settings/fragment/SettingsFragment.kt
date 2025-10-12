@@ -8,10 +8,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.compose.AppTheme
-import com.example.playlistmaker.ui.settings.compose.SettingsCompose
+import com.example.playlistmaker.ui.settings.compose.SettingsComposeScreen
 
 class SettingsFragment : Fragment() {
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,7 +22,7 @@ class SettingsFragment : Fragment() {
             setContent {
                 AppTheme {
                     activity?.let {
-                        SettingsCompose()
+                        SettingsComposeScreen()
                     }
                 }
             }

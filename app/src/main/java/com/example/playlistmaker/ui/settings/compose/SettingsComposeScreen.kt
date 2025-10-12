@@ -19,7 +19,7 @@ import com.example.playlistmaker.compose.components.ComposeToolbar
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsCompose(viewModel: SettingsViewModel = koinViewModel()) {
+fun SettingsComposeScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val isThemeDarkState by viewModel.getThemeLiveData().observeAsState()
 
     Scaffold(
@@ -29,18 +29,19 @@ fun SettingsCompose(viewModel: SettingsViewModel = koinViewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .padding(start = 16.dp, end = 12.dp)
                 .background(MaterialTheme.colorScheme.primary)
         ) {
             Spacer(modifier = Modifier.height(24.dp))
 
-            SettingsItemWithSwitch(
+            SettingsSwitchItem(
                 title = stringResource(R.string.btn_dark_theme),
                 isChecked = isThemeDarkState ?: false,
                 onClick = { isDarkThemeOn -> viewModel.switchTheme(isDarkThemeOn) }
             )
 
             val shareLinq = stringResource(R.string.curs_uri)
-            SettingsItem(
+            SettingsRowItem(
                 title = stringResource(R.string.btn_share),
                 iconId = R.drawable.share
             ) {
@@ -50,7 +51,7 @@ fun SettingsCompose(viewModel: SettingsViewModel = koinViewModel()) {
             val subject = stringResource(R.string.support_subject)
             val message = stringResource(R.string.support_message)
             val mails = arrayOf(stringResource(R.string.support_email))
-            SettingsItem(
+            SettingsRowItem(
                 title = stringResource(R.string.btn_support),
                 iconId = R.drawable.support
             ) {
@@ -58,7 +59,7 @@ fun SettingsCompose(viewModel: SettingsViewModel = koinViewModel()) {
             }
 
             val userAgreementLink = stringResource(R.string.offer_uri)
-            SettingsItem(
+            SettingsRowItem(
                 title = stringResource(R.string.btn_user_agreement),
                 iconId = R.drawable.arrow_forward
             ) {
@@ -69,11 +70,11 @@ fun SettingsCompose(viewModel: SettingsViewModel = koinViewModel()) {
 }
 
 @Composable
-fun SettingsItemWithSwitch(title: String, isChecked: Boolean, onClick: (Boolean) -> Unit) {
+fun SettingsSwitchItem(title: String, isChecked: Boolean, onClick: (Boolean) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(start = 8.dp, end = 6.dp)
             .height(60.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -98,11 +99,11 @@ fun SettingsItemWithSwitch(title: String, isChecked: Boolean, onClick: (Boolean)
 }
 
 @Composable
-fun SettingsItem(title: String, iconId: Int, onClick: () -> Unit) {
+fun SettingsRowItem(title: String, iconId: Int, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(start = 8.dp, end = 6.dp)
             .height(60.dp)
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically,

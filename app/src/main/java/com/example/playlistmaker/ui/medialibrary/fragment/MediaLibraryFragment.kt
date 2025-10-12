@@ -1,41 +1,56 @@
 package com.example.playlistmaker.ui.medialibrary.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentMediaLibraryBinding
-import com.example.playlistmaker.ui.medialibrary.adapter.MediaLibraryViewPagerAdapter
-import com.example.playlistmaker.util.BindingFragment
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.compose.AppTheme
+import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.ui.medialibrary.compose.MediaLibraryComposeScreen
 
-class MediaLibraryFragment : BindingFragment<FragmentMediaLibraryBinding>() {
-    private lateinit var tabLayoutMediator: TabLayoutMediator
+class MediaLibraryFragment : Fragment() {
 
-    override fun createBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentMediaLibraryBinding {
-        return FragmentMediaLibraryBinding.inflate(inflater, container, false)
-    }
+    override fun onCreateView(
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val composeView = ComposeView(requireContext())
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.viewPagerLibrary.adapter = MediaLibraryViewPagerAdapter(childFragmentManager, lifecycle)
-
-        tabLayoutMediator = TabLayoutMediator(binding.tabLibrary, binding.viewPagerLibrary){tab, position ->
-            when (position){
-                0 -> tab.text = getString(R.string.media_library_tab_favourite_tracks)
-                1 -> tab.text = getString(R.string.media_library_tab_playlists)
+        composeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    activity?.let {
+                        MediaLibraryComposeScreen(
+                            openAudioPlayer = ::openAudioPlayer,
+                            navigateToModifyPlaylistScreen = ::navigateToModifyPlaylistScreen,
+                            navigateToOnePlaylistScreen = ::navigateToOnePlaylistScreen,
+                        )
+                    }
+                }
             }
         }
-        tabLayoutMediator.attach()
+        return composeView
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        tabLayoutMediator.detach()
+    fun openAudioPlayer(track: Track) {
+        val action = LibraryFragmentDirections.actionLibraryFragmentToAudioPlayerActivity(track)
+        parentFragment?.findNavController()?.navigate(action)
+    }
+
+    fun navigateToModifyPlaylistScreen() {
+        parentFragment?.findNavController()?.navigate(
+            R.id.action_libraryFragment_to_modifyPlaylistFragment,
+            ModifyPlaylistFragment.createArgs(UNKNOWN_ID)
+        )
+    }
+
+    fun navigateToOnePlaylistScreen(playlistId: Int) {
+        val action =
+            LibraryFragmentDirections.actionLibraryFragmentToOnePlaylistFragment(playlistId)
+        parentFragment?.findNavController()?.navigate(action)
     }
 }
