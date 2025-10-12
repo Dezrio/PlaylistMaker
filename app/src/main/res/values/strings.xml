@@ -27,6 +27,7 @@
 
     <string name="history_search_text">Вы искали</string>
     <string name="history_search_clear_text">Очистить историю</string>
+    <string name="search_clear_text">Очистить</string>
 
     <string name="track_duration_player_text">Длительность</string>
     <string name="track_album_player_text">Альбом</string>

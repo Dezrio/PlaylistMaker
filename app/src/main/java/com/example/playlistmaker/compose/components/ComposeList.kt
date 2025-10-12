@@ -46,7 +46,7 @@ fun ComposeTrackItem(track: Track, onTrackClick: (Track) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        TrackCoverMini(track.artworkUrl100)
+        ComposeTrackCoverMini(track.artworkUrl100)
 
         Column(
             modifier = Modifier
@@ -97,7 +97,7 @@ fun ComposeTrackItem(track: Track, onTrackClick: (Track) -> Unit) {
 }
 
 @Composable
-fun TrackCoverMini(url: String) {
+fun ComposeTrackCoverMini(url: String) {
     AsyncImage(
         model = url,
         contentDescription = stringResource(R.string.track_cover_player_text),
@@ -111,7 +111,7 @@ fun TrackCoverMini(url: String) {
 }
 
 @Composable
-fun TrackListWithButton(
+fun ComposeTrackListWithButton(
     tracks: ImmutableList<Track>,
     onTrackClick: (Track) -> Unit,
     buttonTitle: String,

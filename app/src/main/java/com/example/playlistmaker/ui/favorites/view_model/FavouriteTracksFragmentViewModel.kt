@@ -1,12 +1,9 @@
 package com.example.playlistmaker.ui.favorites.view_model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.favorites.api.interactor.FavoriteTracksInteractor
 import com.example.playlistmaker.domain.search.models.Track
-import com.example.playlistmaker.util.SingleEventLiveData
 import com.example.playlistmaker.util.debounce
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
