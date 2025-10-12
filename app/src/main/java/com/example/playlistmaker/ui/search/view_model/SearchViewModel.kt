@@ -19,7 +19,9 @@ class SearchViewModel(
     private val tracksSearchInteractor: TracksSearchInteractor,
     private val tracksHistoryInteractor: TracksHistoryInteractor
 ) : ViewModel() {
-    private var oldSeachText: String = ""
+    private var _oldSeachTextState = MutableStateFlow("")
+    val searchTextStateFlow = _oldSeachTextState.asStateFlow()
+
     private val _eventState = MutableStateFlow<Track?>(null)
 
     private var tracks: MutableList<Track> = mutableListOf()
@@ -37,22 +39,22 @@ class SearchViewModel(
     val eventState = _eventState.asStateFlow()
 
     fun onSearchTextChange(newSearchText: String?){
-        if (oldSeachText == newSearchText)
+        if (_oldSeachTextState.value == newSearchText)
             return
 
-        oldSeachText = newSearchText ?: ""
+        _oldSeachTextState.update { newSearchText ?: "" }
 
-        if (oldSeachText.isEmpty())
+        if (_oldSeachTextState.value.isEmpty())
             return
 
-        _screenStateFlow.update { SearchScreenState.TextEnterScreenState(newSearchText) }
+        _screenStateFlow.update { SearchScreenState.TextEnterScreenState(newSearchText ?: "") }
         searchDebounce()
     }
 
     fun onSearchTextFocusChange(hasFocus: Boolean){
-        if (hasFocus && oldSeachText.isEmpty() && tracksHistory.isNotEmpty())
-            _screenStateFlow.update { SearchScreenState.TrackHistoryScreenState(tracksHistory) }
-        else if (!hasFocus && oldSeachText.isEmpty())
+        if (hasFocus && _oldSeachTextState.value.isEmpty() && tracksHistory.isNotEmpty())
+            _screenStateFlow.update { SearchScreenState.TrackHistoryScreenState(tracksHistory, _oldSeachTextState.value) }
+        else if (!hasFocus && _oldSeachTextState.value.isEmpty())
             _screenStateFlow.update { SearchScreenState.DefaultScreenState }
     }
 
@@ -63,7 +65,7 @@ class SearchViewModel(
 
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_DELAY)
-            searchTrack(oldSeachText)
+            searchTrack(_oldSeachTextState.value)
         }
     }
 
@@ -82,11 +84,16 @@ class SearchViewModel(
         }
     }
 
+    fun prepareSearch(){
+        _eventState.update { null }
+    }
+
     fun refreshSearch(){
-        searchTrack(oldSeachText)
+        searchTrack(_oldSeachTextState.value)
     }
 
     fun clearSearchText(){
+        _oldSeachTextState.update { "" }
         tracks.clear()
         searchJob?.cancel()
         _screenStateFlow.update { SearchScreenState.DefaultScreenState }
@@ -96,14 +103,14 @@ class SearchViewModel(
         tracks.clear()
 
         if (foundTracks == null) {
-            _screenStateFlow.update { SearchScreenState.ErrorScreenState }
+            _screenStateFlow.update { SearchScreenState.ErrorScreenState(_oldSeachTextState.value) }
         } else{
             if (foundTracks.isNotEmpty()) {
                 tracks.addAll(foundTracks)
                 _trackFlow.update { tracks }
-                _screenStateFlow.update { SearchScreenState.TrackScreenState(tracks) }
+                _screenStateFlow.update { SearchScreenState.TrackScreenState(tracks, _oldSeachTextState.value) }
             } else {
-                _screenStateFlow.update { SearchScreenState.NotFoundScreenState }
+                _screenStateFlow.update { SearchScreenState.NotFoundScreenState(_oldSeachTextState.value) }
             }
         }
     }

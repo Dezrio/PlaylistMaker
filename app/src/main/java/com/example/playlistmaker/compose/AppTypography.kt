@@ -56,8 +56,8 @@ fun appTypography(colorScheme: ColorScheme): Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = AppFont.YsDisplay,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        color = colorScheme.onPrimary
+        fontSize = 16.sp,
+        color = colorScheme.surface
     ),
     titleSmall = TextStyle(
         fontFamily = AppFont.YsDisplay,

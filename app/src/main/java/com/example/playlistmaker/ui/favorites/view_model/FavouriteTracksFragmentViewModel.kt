@@ -24,6 +24,10 @@ class FavouriteTracksFragmentViewModel(
             _onTrackClickStateFlow.update { track }
         }
 
+    fun prepareSearch(){
+        _onTrackClickStateFlow.update { null }
+    }
+
     fun loadTracks() {
         renderState(FavouriteTracksScreenState.Loading)
 

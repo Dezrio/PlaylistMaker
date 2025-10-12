@@ -32,6 +32,7 @@ fun FavouriteTracksComposeScreen(
     val track by viewModel.onTrackClickStateFlow.collectAsStateWithLifecycle(initialValue = null)
 
     LifecycleStartEffect(Unit) {
+        viewModel.prepareSearch()
         viewModel.loadTracks()
         onStopOrDispose { }
     }
@@ -65,7 +66,7 @@ fun FavouriteTracksComposeScreen(
                 is FavouriteTracksScreenState.NotFound -> {
                     ComposeErrorMessage(
                         stringResource(R.string.not_found_search_text),
-                        R.drawable.not_found_light,
+                        R.drawable.not_found_compose,
                         106
                     )
                 }

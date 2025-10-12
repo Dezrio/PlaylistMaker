@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.playlistmaker.R
 import com.example.playlistmaker.compose.components.ComposeButton
@@ -36,10 +37,16 @@ fun SearchComposeScreen(
     openAudioPlayer: (Track) -> Unit
 ) {
     val screenState by viewModel.screenStateFlow.collectAsStateWithLifecycle()
+    val searchTextState by viewModel.searchTextStateFlow.collectAsStateWithLifecycle()
     val eventState by viewModel.eventState.collectAsStateWithLifecycle(initialValue = null)
 
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
+
+    LifecycleStartEffect(Unit) {
+        viewModel.prepareSearch()
+        onStopOrDispose { }
+    }
 
     LaunchedEffect(eventState) {
         eventState?.let {
@@ -58,69 +65,95 @@ fun SearchComposeScreen(
                 .background(MaterialTheme.colorScheme.primary),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ComposeTextField(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .focusRequester(focusRequester),
-                text = screenState.searchText,
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(R.drawable.search_icon),
-                        contentDescription = stringResource(R.string.btn_search),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        painter = painterResource(R.drawable.clear),
-                        contentDescription = stringResource(R.string.search_clear_text),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.clickable {
-                            focusManager.clearFocus()
-                            viewModel.clearSearchText()
-                        }
-                    )
-                },
-                placeholderText = stringResource(R.string.btn_search),
+            SearchBarSection(
+                text = searchTextState,
                 onTextChanged = viewModel::onSearchTextChange,
-                onFocusChanged = viewModel::onSearchTextFocusChange
+                onFocusChanged = viewModel::onSearchTextFocusChange,
+                onClear = {
+                    focusManager.clearFocus()
+                    viewModel.clearSearchText()
+                },
+                focusRequester = focusRequester
             )
 
-            when (screenState) {
-                is SearchScreenState.DefaultScreenState,
-                is SearchScreenState.TextEnterScreenState -> {}
+            SearchContentSection(
+                screenState = screenState,
+                onTrackClick = viewModel::onTrackClick,
+                onRefresh = viewModel::refreshSearch,
+                onClearHistory = viewModel::clearHistory
+            )
+        }
+    }
+}
 
-                is SearchScreenState.LoadingScreenState -> ComposeProgressBar()
+@Composable
+private fun SearchBarSection(
+    text: String,
+    onTextChanged: (String) -> Unit,
+    onFocusChanged: (Boolean) -> Unit,
+    onClear: () -> Unit,
+    focusRequester: FocusRequester
+) {
+    ComposeTextField(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .focusRequester(focusRequester),
+        text = text,
+        leadingIcon = {
+            Icon(
+                painter = painterResource(R.drawable.search_icon),
+                contentDescription = stringResource(R.string.btn_search),
+                tint = MaterialTheme.colorScheme.onSecondary
+            )
+        },
+        trailingIcon = {
+            Icon(
+                painter = painterResource(R.drawable.clear),
+                contentDescription = stringResource(R.string.search_clear_text),
+                tint = MaterialTheme.colorScheme.onSecondary,
+                modifier = Modifier.clickable { onClear() }
+            )
+        },
+        placeholderText = stringResource(R.string.btn_search),
+        onTextChanged = onTextChanged,
+        onFocusChanged = onFocusChanged
+    )
+}
 
-                is SearchScreenState.TrackScreenState -> {
-                    ComposeTrackList(
-                        tracks = (screenState as SearchScreenState.TrackScreenState).tracks.toImmutableList(),
-                        onTrackClick = viewModel::onTrackClick
-                    )
-                }
+@Composable
+private fun SearchContentSection(
+    screenState: SearchScreenState,
+    onTrackClick: (Track) -> Unit,
+    onRefresh: () -> Unit,
+    onClearHistory: () -> Unit
+) {
+    when (screenState) {
+        is SearchScreenState.DefaultScreenState,
+        is SearchScreenState.TextEnterScreenState -> {}
 
-                is SearchScreenState.NotFoundScreenState -> {
-                    SearchComposeScreenError(
-                        true,
-                        viewModel::refreshSearch
-                    )
-                }
+        is SearchScreenState.LoadingScreenState -> ComposeProgressBar()
 
-                is SearchScreenState.ErrorScreenState -> {
-                    SearchComposeScreenError(
-                        false,
-                        viewModel::refreshSearch
-                    )
-                }
+        is SearchScreenState.TrackScreenState -> {
+            ComposeTrackList(
+                tracks = screenState.tracks.toImmutableList(),
+                onTrackClick = onTrackClick
+            )
+        }
 
-                is SearchScreenState.TrackHistoryScreenState -> {
-                    SearchHistoryBlock(
-                        tracks = (screenState as SearchScreenState.TrackHistoryScreenState).tracks.toImmutableList(),
-                        onTrackClick = viewModel::onTrackClick,
-                        onClearHistoryClick = viewModel::clearHistory
-                    )
-                }
-            }
+        is SearchScreenState.NotFoundScreenState -> {
+            SearchComposeScreenError(true, onRefresh)
+        }
+
+        is SearchScreenState.ErrorScreenState -> {
+            SearchComposeScreenError(false, onRefresh)
+        }
+
+        is SearchScreenState.TrackHistoryScreenState -> {
+            SearchHistoryBlock(
+                tracks = screenState.tracks.toImmutableList(),
+                onTrackClick = onTrackClick,
+                onClearHistoryClick = onClearHistory
+            )
         }
     }
 }
@@ -133,13 +166,13 @@ fun SearchComposeScreenError(isEmpty: Boolean,onUpdateClick: () -> Unit) {
         if (isEmpty){
             ComposeErrorMessage(
                 message = stringResource(R.string.not_found_search_text),
-                iconId = R.drawable.not_found_dark,
+                iconId = R.drawable.not_found_compose,
                 topPadding
             )
         } else {
             ComposeErrorMessage(
                 message = stringResource(R.string.error_search_text),
-                iconId = R.drawable.not_found_dark,
+                iconId = R.drawable.error_compose,
                 topPadding
             )
         }

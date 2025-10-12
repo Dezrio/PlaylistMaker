@@ -22,19 +22,19 @@ val LightColorScheme = lightColorScheme(
     onTertiary = Gray400,
     background = Color.White,
     onBackground = Color.Black,
-    surface = Color.White,
+    surface = Gray900,
     onSurface = Gray900
 )
 
 val DarkColorScheme = darkColorScheme(
     primary = Gray900,
     onPrimary = White,
-    secondary = Gray50,
+    secondary = White,
     onSecondary = Gray900,
     tertiary = White,
     onTertiary = White,
     background = Color(0xFF121212),
     onBackground = White,
-    surface = Color(0xFF121212),
+    surface = Black,
     onSurface = White
 )

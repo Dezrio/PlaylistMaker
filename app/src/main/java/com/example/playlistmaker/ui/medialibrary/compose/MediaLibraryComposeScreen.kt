@@ -23,6 +23,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.playlistmaker.R
 import com.example.playlistmaker.compose.components.ComposeToolbar
@@ -60,7 +62,7 @@ fun MediaLibraryComposeScreen(
                                 .tabIndicatorOffset(selectedTabIndex)
                                 .padding(horizontal = 16.dp)
                                 .height(2.dp),
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     },
                     divider = { HorizontalDivider(color = MaterialTheme.colorScheme.primary) }
@@ -78,7 +80,10 @@ fun MediaLibraryComposeScreen(
                                         LibraryTabs.Favorites -> stringResource(R.string.media_library_tab_favourite_tracks)
                                         LibraryTabs.Playlists -> stringResource(R.string.media_library_tab_playlists)
                                     },
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        fontWeight = FontWeight.Medium
+                                    )
                                 )
                             },
                             selectedContentColor = MaterialTheme.colorScheme.secondary,

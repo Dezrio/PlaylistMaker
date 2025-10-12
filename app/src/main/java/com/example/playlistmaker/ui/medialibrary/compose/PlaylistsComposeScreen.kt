@@ -29,10 +29,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.playlistmaker.R
+import com.example.playlistmaker.compose.components.ComposeButton
 import com.example.playlistmaker.compose.components.ComposeErrorMessage
 import com.example.playlistmaker.compose.components.ComposeProgressBar
 import com.example.playlistmaker.domain.medialibrary.models.Playlist
@@ -83,7 +85,7 @@ fun PlaylistsComposeScreen(
                     ComposePlaylistsContent(onClick = openAddPlaylist)
                     ComposeErrorMessage(
                         stringResource(R.string.empty_playlist_track_list_message),
-                        R.drawable.not_found_light,
+                        R.drawable.not_found_compose,
                         46
                     )
                 }
@@ -176,17 +178,7 @@ fun ComposePlaylistCover(
 @Composable
 fun ComposePlaylistsContent(onClick: () -> Unit) {
     Spacer(modifier = Modifier.height(24.dp))
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Text(
-            text = stringResource(R.string.media_library_btn_new_playlist),
-            style = MaterialTheme.typography.labelLarge
-        )
+    ComposeButton(stringResource(R.string.media_library_btn_new_playlist)) {
+        onClick()
     }
 }
