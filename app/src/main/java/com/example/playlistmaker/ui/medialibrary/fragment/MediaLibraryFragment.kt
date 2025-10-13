@@ -24,13 +24,11 @@ class MediaLibraryFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    activity?.let {
-                        MediaLibraryComposeScreen(
-                            openAudioPlayer = ::openAudioPlayer,
-                            openAddPlaylist = ::openAddPlaylist,
-                            openPlaylist = ::openPlaylist,
-                        )
-                    }
+                    MediaLibraryComposeScreen(
+                        openAudioPlayer = ::openAudioPlayer,
+                        openAddPlaylist = ::openAddPlaylist,
+                        openPlaylist = ::openPlaylist,
+                    )
                 }
             }
         }

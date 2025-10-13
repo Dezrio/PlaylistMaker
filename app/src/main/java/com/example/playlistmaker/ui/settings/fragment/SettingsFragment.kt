@@ -21,13 +21,10 @@ class SettingsFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 AppTheme {
-                    activity?.let {
-                        SettingsComposeScreen()
-                    }
+                    SettingsComposeScreen()
                 }
             }
         }
-
         return composeView
     }
 }

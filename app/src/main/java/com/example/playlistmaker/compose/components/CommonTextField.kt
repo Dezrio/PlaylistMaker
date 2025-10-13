@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.playlistmaker.R
 
 @Composable
-fun ComposeTextField(
+fun CommonTextField(
     modifier: Modifier = Modifier,
     text: String,
     leadingIcon: (@Composable () -> Unit)? = null,

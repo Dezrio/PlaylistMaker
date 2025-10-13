@@ -14,9 +14,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.playlistmaker.R
-import com.example.playlistmaker.compose.components.ComposeErrorMessage
-import com.example.playlistmaker.compose.components.ComposeProgressBar
-import com.example.playlistmaker.compose.components.ComposeTrackList
+import com.example.playlistmaker.compose.components.CommonErrorMessage
+import com.example.playlistmaker.compose.components.CommonProgressBar
+import com.example.playlistmaker.compose.components.CommonTrackList
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.favorites.view_model.FavouriteTracksFragmentViewModel
 import com.example.playlistmaker.ui.favorites.view_model.FavouriteTracksScreenState
@@ -43,29 +43,29 @@ fun FavouriteTracksComposeScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.primary
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.primary)
         ) {
             when (screenState) {
                 is FavouriteTracksScreenState.Loading -> {
-                    ComposeProgressBar()
+                    CommonProgressBar()
                 }
 
                 is FavouriteTracksScreenState.Found -> {
-                    ComposeTrackList(
+                    CommonTrackList(
                         tracks = (screenState as FavouriteTracksScreenState.Found).tracks.toImmutableList(),
                         onTrackClick = viewModel::onTrackClick
                     )
                 }
 
                 is FavouriteTracksScreenState.NotFound -> {
-                    ComposeErrorMessage(
-                        stringResource(R.string.not_found_search_text),
+                    CommonErrorMessage(
+                        stringResource(R.string.media_library_empty_favourite_tracks_text),
                         R.drawable.not_found_compose,
                         106
                     )

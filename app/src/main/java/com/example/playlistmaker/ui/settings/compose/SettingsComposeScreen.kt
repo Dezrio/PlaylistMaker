@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.playlistmaker.R
-import com.example.playlistmaker.compose.components.ComposeToolbar
+import com.example.playlistmaker.compose.components.CommonToolbar
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -23,14 +23,14 @@ fun SettingsComposeScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val isThemeDarkState by viewModel.getThemeLiveData().observeAsState()
 
     Scaffold(
-        topBar = { ComposeToolbar(stringResource(R.string.btn_settings)) }
+        topBar = { CommonToolbar(stringResource(R.string.btn_settings)) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(start = 16.dp, end = 12.dp)
                 .background(MaterialTheme.colorScheme.primary)
+                .padding(innerPadding)
+                .padding(start = 8.dp, end = 6.dp)
         ) {
             Spacer(modifier = Modifier.height(24.dp))
 

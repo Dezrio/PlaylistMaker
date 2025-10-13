@@ -29,7 +29,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.search.fragment.SearchFragment"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name=".ui.settings.fragment.SettingsFragment"
             android:exported="false" />

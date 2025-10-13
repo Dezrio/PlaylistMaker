@@ -17,13 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.playlistmaker.R
-import com.example.playlistmaker.compose.components.ComposeButton
-import com.example.playlistmaker.compose.components.ComposeErrorMessage
-import com.example.playlistmaker.compose.components.ComposeProgressBar
-import com.example.playlistmaker.compose.components.ComposeTextField
-import com.example.playlistmaker.compose.components.ComposeToolbar
-import com.example.playlistmaker.compose.components.ComposeTrackList
-import com.example.playlistmaker.compose.components.ComposeTrackListWithButton
+import com.example.playlistmaker.compose.components.CommonButton
+import com.example.playlistmaker.compose.components.CommonErrorMessage
+import com.example.playlistmaker.compose.components.CommonProgressBar
+import com.example.playlistmaker.compose.components.CommonTextField
+import com.example.playlistmaker.compose.components.CommonToolbar
+import com.example.playlistmaker.compose.components.CommonTrackList
+import com.example.playlistmaker.compose.components.CommonTrackListWithButton
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.search.view_model.SearchScreenState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
@@ -56,13 +56,13 @@ fun SearchComposeScreen(
     }
 
     Scaffold(
-        topBar = { ComposeToolbar(stringResource(R.string.btn_search)) },
+        topBar = { CommonToolbar(stringResource(R.string.btn_search)) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.primary),
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SearchBarSection(
@@ -94,7 +94,7 @@ private fun SearchBarSection(
     onClear: () -> Unit,
     focusRequester: FocusRequester
 ) {
-    ComposeTextField(
+    CommonTextField(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .focusRequester(focusRequester),
@@ -131,10 +131,10 @@ private fun SearchContentSection(
         is SearchScreenState.DefaultScreenState,
         is SearchScreenState.TextEnterScreenState -> {}
 
-        is SearchScreenState.LoadingScreenState -> ComposeProgressBar()
+        is SearchScreenState.LoadingScreenState -> CommonProgressBar()
 
         is SearchScreenState.TrackScreenState -> {
-            ComposeTrackList(
+            CommonTrackList(
                 tracks = screenState.tracks.toImmutableList(),
                 onTrackClick = onTrackClick
             )
@@ -160,24 +160,22 @@ private fun SearchContentSection(
 
 @Composable
 fun SearchComposeScreenError(isEmpty: Boolean,onUpdateClick: () -> Unit) {
-    val topPadding = 110
-
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         if (isEmpty){
-            ComposeErrorMessage(
+            CommonErrorMessage(
                 message = stringResource(R.string.not_found_search_text),
                 iconId = R.drawable.not_found_compose,
                 topPadding
             )
         } else {
-            ComposeErrorMessage(
+            CommonErrorMessage(
                 message = stringResource(R.string.error_search_text),
                 iconId = R.drawable.error_compose,
                 topPadding
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
-        ComposeButton(stringResource(R.string.refresh_search_text), onClick = onUpdateClick)
+        CommonButton(stringResource(R.string.refresh_search_text), onClick = onUpdateClick)
     }
 }
 
@@ -199,7 +197,7 @@ fun SearchHistoryBlock(
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(20.dp))
-        ComposeTrackListWithButton(
+        CommonTrackListWithButton(
             tracks = tracks,
             onTrackClick = onTrackClick,
             buttonTitle = stringResource(R.string.history_search_clear_text),
@@ -207,3 +205,5 @@ fun SearchHistoryBlock(
         )
     }
 }
+
+const val topPadding = 110

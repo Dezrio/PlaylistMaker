@@ -4,8 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.compose.AppTheme
@@ -18,16 +25,17 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         val composeView = ComposeView(requireContext())
+
         composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+
             setContent {
                 AppTheme {
-                    activity?.let {
-                        SearchComposeScreen(
-                            openAudioPlayer = ::openAudioPlayer
-                        )
-                    }
+                    SearchComposeScreen(
+                        openAudioPlayer = ::openAudioPlayer
+                    )
                 }
             }
         }

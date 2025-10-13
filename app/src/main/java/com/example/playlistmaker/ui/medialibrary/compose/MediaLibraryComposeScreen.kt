@@ -23,11 +23,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.playlistmaker.R
-import com.example.playlistmaker.compose.components.ComposeToolbar
+import com.example.playlistmaker.compose.components.CommonToolbar
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.favorites.compose.FavouriteTracksComposeScreen
 import kotlinx.coroutines.launch
@@ -43,13 +42,13 @@ fun MediaLibraryComposeScreen(
     val selectedTabIndex by remember { derivedStateOf { pagerState.currentPage } }
 
     Scaffold(
-        topBar = { ComposeToolbar(stringResource(R.string.btn_library)) },
+        topBar = { CommonToolbar(stringResource(R.string.btn_library)) },
         content = { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.primary)
             ) {
                 SecondaryTabRow (
                     selectedTabIndex = selectedTabIndex,

@@ -14,8 +14,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,14 +27,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.playlistmaker.R
-import com.example.playlistmaker.compose.components.ComposeButton
-import com.example.playlistmaker.compose.components.ComposeErrorMessage
-import com.example.playlistmaker.compose.components.ComposeProgressBar
+import com.example.playlistmaker.compose.components.CommonButton
+import com.example.playlistmaker.compose.components.CommonErrorMessage
+import com.example.playlistmaker.compose.components.CommonProgressBar
 import com.example.playlistmaker.domain.medialibrary.models.Playlist
 import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsFragmentViewModel
 import com.example.playlistmaker.ui.medialibrary.view_model.PlaylistsScreenState
@@ -63,12 +60,12 @@ fun PlaylistsComposeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.background),
+                .background(MaterialTheme.colorScheme.primary),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (screenState) {
                 is PlaylistsScreenState.Loading -> {
-                    ComposeProgressBar()
+                    CommonProgressBar()
                 }
 
                 is PlaylistsScreenState.Found -> {
@@ -83,8 +80,8 @@ fun PlaylistsComposeScreen(
 
                 is PlaylistsScreenState.NotFound -> {
                     ComposePlaylistsContent(onClick = openAddPlaylist)
-                    ComposeErrorMessage(
-                        stringResource(R.string.empty_playlist_track_list_message),
+                    CommonErrorMessage(
+                        stringResource(R.string.media_library_empty_playlists_text),
                         R.drawable.not_found_compose,
                         46
                     )
@@ -178,7 +175,7 @@ fun ComposePlaylistCover(
 @Composable
 fun ComposePlaylistsContent(onClick: () -> Unit) {
     Spacer(modifier = Modifier.height(24.dp))
-    ComposeButton(stringResource(R.string.media_library_btn_new_playlist)) {
+    CommonButton(stringResource(R.string.media_library_btn_new_playlist)) {
         onClick()
     }
 }

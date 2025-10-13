@@ -1,6 +1,5 @@
 package com.example.playlistmaker.compose.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,19 +21,19 @@ import com.example.playlistmaker.domain.search.models.Track
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun ComposeTrackList(tracks: ImmutableList<Track>, onTrackClick: (Track) -> Unit) {
+fun CommonTrackList(tracks: ImmutableList<Track>, onTrackClick: (Track) -> Unit) {
     LazyColumn(
         verticalArrangement = Arrangement.Top,
         modifier = Modifier.padding(top = 16.dp)
     ) {
         items(tracks) { track ->
-            ComposeTrackItem(track, onTrackClick)
+            CommonTrackItem(track, onTrackClick)
         }
     }
 }
 
 @Composable
-fun ComposeTrackItem(track: Track, onTrackClick: (Track) -> Unit) {
+fun CommonTrackItem(track: Track, onTrackClick: (Track) -> Unit) {
     val trackDuration = track.trackTime.ifEmpty { stringResource(R.string.track_time_placeholder) }
 
     Row(
@@ -46,7 +45,7 @@ fun ComposeTrackItem(track: Track, onTrackClick: (Track) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        ComposeTrackCoverMini(track.artworkUrl100)
+        CommonTrackCoverMini(track.artworkUrl100)
 
         Column(
             modifier = Modifier
@@ -97,7 +96,7 @@ fun ComposeTrackItem(track: Track, onTrackClick: (Track) -> Unit) {
 }
 
 @Composable
-fun ComposeTrackCoverMini(url: String) {
+fun CommonTrackCoverMini(url: String) {
     AsyncImage(
         model = url,
         contentDescription = stringResource(R.string.track_cover_player_text),
@@ -111,7 +110,7 @@ fun ComposeTrackCoverMini(url: String) {
 }
 
 @Composable
-fun ComposeTrackListWithButton(
+fun CommonTrackListWithButton(
     tracks: ImmutableList<Track>,
     onTrackClick: (Track) -> Unit,
     buttonTitle: String,
@@ -123,11 +122,11 @@ fun ComposeTrackListWithButton(
         modifier = Modifier.padding(top = 16.dp)
     ) {
         items(tracks) { track ->
-            ComposeTrackItem(track, onTrackClick)
+            CommonTrackItem(track, onTrackClick)
         }
         item {
             Spacer(modifier = Modifier.height(24.dp))
-            ComposeButton(title = buttonTitle, onClick = onButtonClick)
+            CommonButton(title = buttonTitle, onClick = onButtonClick)
             Spacer(modifier = Modifier.height(60.dp))
         }
     }
