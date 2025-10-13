@@ -1,7 +1,7 @@
 <resources>
     <string name="empty_string" />
 
-    <string name="app_name">Playlist Maker</string>
+    <string name="app_name">Playlist Maker Compose</string>
     <string name="btn_search">Поиск</string>
     <string name="btn_library">Медиатека</string>
     <string name="btn_settings">Настройки</string>
@@ -27,6 +27,7 @@
 
     <string name="history_search_text">Вы искали</string>
     <string name="history_search_clear_text">Очистить историю</string>
+    <string name="search_clear_text">Очистить</string>
 
     <string name="track_duration_player_text">Длительность</string>
     <string name="track_album_player_text">Альбом</string>
@@ -105,4 +106,5 @@
     <string name="empty_playlist_track_list_message">В этом плейлисте нет треков</string>
 
     <string name="audio_player_notification_channel_description">Audio player notification channel</string>
+    <string name="track_details">Детали трека</string>
 </resources>

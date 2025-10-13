@@ -17,7 +17,7 @@ import com.example.playlistmaker.ui.search.adapter.TrackAdapter
 import com.example.playlistmaker.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavoriteTracksFragment : BindingFragment<FragmentFavouriteTracksBinding>() {
+class FavouriteTracksFragment : BindingFragment<FragmentFavouriteTracksBinding>() {
 
     private val viewModel: FavouriteTracksFragmentViewModel by viewModel()
 
@@ -40,7 +40,7 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavouriteTracksBinding>()
 
         binding.rvTrackList.adapter = trackAdapter
 
-        viewModel.observeScreenState().observe(viewLifecycleOwner) { state ->
+        /*viewModel.observeScreenState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is FavouriteTracksScreenState.Loading -> setLoadingState()
                 is FavouriteTracksScreenState.NotFound -> setNotFoundState()
@@ -53,7 +53,7 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavouriteTracksBinding>()
                 track
             )
             parentFragment?.findNavController()?.navigate(action)
-        }
+        }*/
     }
 
     private fun onTrackClick(track: Track) {
@@ -99,6 +99,6 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavouriteTracksBinding>()
     }
 
     companion object{
-        fun newInstance() : FavoriteTracksFragment = FavoriteTracksFragment()
+        fun newInstance() : FavouriteTracksFragment = FavouriteTracksFragment()
     }
 }

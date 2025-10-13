@@ -20,6 +20,7 @@ class SettingsViewModel(
 
     fun switchTheme(isDarkTheme: Boolean) {
         settingsInteractor.switchTheme(isDarkTheme)
+        themeLiveData.postValue(isDarkTheme)
     }
 
     fun shareLink(shareAppLink: String) {

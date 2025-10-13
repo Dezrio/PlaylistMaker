@@ -1,8 +1,5 @@
 package com.example.playlistmaker.ui.search.view_model
 
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,54 +7,55 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.search.api.interactor.TracksHistoryInteractor
 import com.example.playlistmaker.domain.search.api.interactor.TracksSearchInteractor
 import com.example.playlistmaker.domain.search.models.Track
-import com.example.playlistmaker.util.EventLiveData
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val tracksSearchInteractor: TracksSearchInteractor,
     private val tracksHistoryInteractor: TracksHistoryInteractor
 ) : ViewModel() {
-    private var oldSeachText: String = ""
-    private val eventLiveData = EventLiveData<Track>()
+    private var _oldSeachTextState = MutableStateFlow("")
+    val searchTextStateFlow = _oldSeachTextState.asStateFlow()
 
-    init {
-        eventLiveData.postValue(null)
-    }
+    private val _eventState = MutableStateFlow<Track?>(null)
 
     private var tracks: MutableList<Track> = mutableListOf()
     private val tracksHistory: MutableList<Track> = tracksHistoryInteractor.getHistory().toMutableList()
 
-    private val screenStateLiveData = MutableLiveData<ScreenState>(ScreenState.DefaultScreenState)
-    private val trackLiveData = MutableLiveData<List<Track>>(tracks)
+    private val _screenStateFlow = MutableStateFlow<SearchScreenState>(SearchScreenState.DefaultScreenState)
+    val screenStateFlow = _screenStateFlow.asStateFlow()
+
+    private val _trackFlow = MutableStateFlow<List<Track>>(tracks)
+    val trackFlow = _trackFlow.asStateFlow()
+
     private val tracksHistoryLiveData = MutableLiveData<List<Track>>(tracksHistory)
 
-    fun getScreenSateLiveData(): LiveData<ScreenState> = screenStateLiveData
-    fun getTrackLiveData(): LiveData<List<Track>> = trackLiveData
     fun getTracksHistoryLiveData(): LiveData<List<Track>> = tracksHistoryLiveData
-    fun getEventLiveData(): LiveData<Track> = eventLiveData
+    val eventState = _eventState.asStateFlow()
 
     fun onSearchTextChange(newSearchText: String?){
-        if (oldSeachText == newSearchText)
+        if (_oldSeachTextState.value == newSearchText)
             return
 
-        oldSeachText = newSearchText ?: ""
+        _oldSeachTextState.update { newSearchText ?: "" }
 
-        if (oldSeachText.isEmpty())
+        if (_oldSeachTextState.value.isEmpty())
             return
 
-        screenStateLiveData.postValue(ScreenState.TextEnterScreenState)
+        _screenStateFlow.update { SearchScreenState.TextEnterScreenState(newSearchText ?: "") }
         searchDebounce()
     }
 
     fun onSearchTextFocusChange(hasFocus: Boolean){
-        if (hasFocus && oldSeachText.isEmpty() && tracksHistory.isNotEmpty())
-            screenStateLiveData.postValue(ScreenState.TrackHistoryScreenState)
-        else if (!hasFocus && oldSeachText.isEmpty())
-            screenStateLiveData.postValue(ScreenState.DefaultScreenState)
+        if (hasFocus && _oldSeachTextState.value.isEmpty() && tracksHistory.isNotEmpty())
+            _screenStateFlow.update { SearchScreenState.TrackHistoryScreenState(tracksHistory, _oldSeachTextState.value) }
+        else if (!hasFocus && _oldSeachTextState.value.isEmpty())
+            _screenStateFlow.update { SearchScreenState.DefaultScreenState }
     }
 
     private var searchJob: Job? = null
@@ -67,14 +65,14 @@ class SearchViewModel(
 
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_DELAY)
-            searchTrack(oldSeachText)
+            searchTrack(_oldSeachTextState.value)
         }
     }
 
     private fun searchTrack(trackName: String) {
         searchJob?.cancel()
 
-        screenStateLiveData.postValue(ScreenState.LoadingScreenState)
+        _screenStateFlow.update { SearchScreenState.LoadingScreenState }
 
         searchJob = viewModelScope.launch {
             tracksSearchInteractor
@@ -86,28 +84,33 @@ class SearchViewModel(
         }
     }
 
+    fun prepareSearch(){
+        _eventState.update { null }
+    }
+
     fun refreshSearch(){
-        searchTrack(oldSeachText)
+        searchTrack(_oldSeachTextState.value)
     }
 
     fun clearSearchText(){
+        _oldSeachTextState.update { "" }
         tracks.clear()
         searchJob?.cancel()
-        screenStateLiveData.postValue(ScreenState.DefaultScreenState)
+        _screenStateFlow.update { SearchScreenState.DefaultScreenState }
     }
 
     private fun handleSearchResult(foundTracks: List<Track>?) {
         tracks.clear()
 
         if (foundTracks == null) {
-            screenStateLiveData.postValue(ScreenState.ErrorScreenState)
+            _screenStateFlow.update { SearchScreenState.ErrorScreenState(_oldSeachTextState.value) }
         } else{
             if (foundTracks.isNotEmpty()) {
                 tracks.addAll(foundTracks)
-                trackLiveData.postValue(tracks)
-                screenStateLiveData.postValue(ScreenState.TrackScreenState)
+                _trackFlow.update { tracks }
+                _screenStateFlow.update { SearchScreenState.TrackScreenState(tracks, _oldSeachTextState.value) }
             } else {
-                screenStateLiveData.postValue(ScreenState.NotFoundScreenState)
+                _screenStateFlow.update { SearchScreenState.NotFoundScreenState(_oldSeachTextState.value) }
             }
         }
     }
@@ -119,7 +122,7 @@ class SearchViewModel(
         if (!tracksHistory.any { it.trackId == track.trackId })
             saveTrack(track)
 
-        eventLiveData.postValue(track)
+        _eventState.update{ track }
     }
 
     private fun saveTrack(track: Track) {
